@@ -20,7 +20,7 @@ export default function HomeTeleprompter() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState(1.0)
   const [currentLine, setCurrentLine] = useState(0)
-  const [scriptLines, setScriptLines] = useState<string[]>([])
+  const [scriptLines, setScriptLines] = useState<string[]>(DEMO_TEXT.split('\n'))
   const [buttonFeedback, setButtonFeedback] = useState({ minus: false, plus: false, play: false })
   const [isHovered, setIsHovered] = useState(false)
   
@@ -31,11 +31,6 @@ export default function HomeTeleprompter() {
   
   // Timer reference
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  
-  // Initialize script lines
-  useEffect(() => {
-    setScriptLines(DEMO_TEXT.split('\n'))
-  }, [])
   
   // Handle play/pause (can be triggered externally)
   const togglePlay = () => {
@@ -137,9 +132,10 @@ export default function HomeTeleprompter() {
         
         {/* Text display area */}
         <div 
-          className={`w-full h-[${DISPLAY_HEIGHT}px] bg-gray-900 rounded mb-4 overflow-hidden relative ${
-            !isPlaying && isHovered ? "cursor-pointer" : ""
-          }`}
+          className="w-full h-[180px] bg-gray-900 rounded mb-4 overflow-hidden relative"
+          style={{ 
+            cursor: !isPlaying && isHovered ? "pointer" : "default"
+          }}
           onClick={!isPlaying ? togglePlay : undefined}
         >
           {/* Static highlight bar in center */}
