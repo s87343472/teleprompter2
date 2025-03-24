@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rectangle -->
+  <rect width="512" height="512" rx="64" fill="#000000" />
+
+  <!-- Teleprompter screen -->
+  <rect x="96" y="96" width="320" height="320" rx="32" fill="#FFFFFF" />
+
+  <!-- Orange indicator line -->
+  <rect x="96" y="224" width="320" height="64" fill="#FF5C00" />
+
+  <!-- T.P letters -->
+  <path d="M176 176H256V208H232V336H200V208H176V176Z" fill="#000000" />
+  <path
+    d="M272 176H336C352 176 368 192 368 208V240C368 256 352 272 336 272H304V336H272V176ZM304 208V240H336V208H304Z"
+    fill="#000000"
+  />
+</svg>
