@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown } from "lucide-react"
 import Logo from "@/components/Logo"
 
-export default function EditorPage() {
+// 创建一个内部组件来处理搜索参数
+function EditorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -555,6 +556,19 @@ export default function EditorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// 主页面组件
+export default function EditorPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen bg-gray-200">
+        <div className="text-xl font-mono text-gray-600">Loading editor...</div>
+      </div>
+    }>
+      <EditorContent />
+    </Suspense>
   )
 }
 
