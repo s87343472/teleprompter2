@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, Minus, Pause, Play, Plus, RotateCcw, Volume2, VolumeX } from "lucide-react"
+import { ChevronLeft, Minus, Pause, Play, Plus, RotateCcw, Volume2, VolumeX, Expand } from "lucide-react"
 import Logo from "@/components/Logo"
 import Link from "next/link"
 
@@ -68,7 +68,7 @@ export default function PlaybackPage() {
   const adjustSpeed = useCallback((amount: number) => {
     setSpeed((prev) => {
       const newSpeed = Number.parseFloat((prev + amount).toFixed(1))
-      return Math.max(0.5, Math.min(3.0, newSpeed))
+      return Math.max(0.1, Math.min(10.0, newSpeed))
     })
   }, [])
 
@@ -171,7 +171,7 @@ export default function PlaybackPage() {
 
   // Exit playback
   const exitPlayback = () => {
-    router.push("/editor")
+    router.push(`/editor?keepScript=${encodeURIComponent(scriptContent)}`)
   }
 
   // Mouse movement detection for controls
@@ -343,24 +343,26 @@ export default function PlaybackPage() {
       {/* Bottom controls - only visible when controls are shown */}
       {showControls && (
         <div className="bg-gray-900/80 p-4 flex justify-center space-x-6 z-50">
-          <Button
-            variant="ghost"
-            className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-            onClick={() => adjustSpeed(-0.1)}
-            title="Decrease Speed"
-          >
-            <Minus className="w-4 h-4" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-            onClick={resetToStart}
-            title="Reset to Start"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </Button>
-
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+              onClick={() => adjustSpeed(-0.1)}
+              title="Decrease Speed"
+            >
+              <Minus className="w-4 h-4" />
+            </Button>
+            <div className="text-xs text-white">{speed.toFixed(1)}x</div>
+            <Button
+              variant="ghost"
+              className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+              onClick={() => adjustSpeed(0.1)}
+              title="Increase Speed"
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          </div>
+          
           <Button
             variant="ghost"
             className={`w-12 h-10 ${isPlaying ? "bg-orange-500 hover:bg-orange-600" : "bg-black hover:bg-gray-800"} text-white flex items-center justify-center`}
@@ -369,23 +371,20 @@ export default function PlaybackPage() {
           >
             {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </Button>
-
+          
           <Button
             variant="ghost"
-            className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-            onClick={() => adjustSpeed(0.1)}
-            title="Increase Speed"
+            className="w-12 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+            onClick={() => {
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              } else {
+                document.documentElement.requestFullscreen();
+              }
+            }}
+            title="Fullscreen"
           >
-            <Plus className="w-4 h-4" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-            onClick={toggleMute}
-            title={isMuted ? "Unmute" : "Mute"}
-          >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            <Expand className="w-4 h-4" />
           </Button>
         </div>
       )}

@@ -22,18 +22,18 @@ export default function Home() {
           </div>
 
           <div className="hidden md:flex space-x-6 items-center">
-            <a href="#features" className="text-sm hover:text-orange-500">
+            <Link href="/features" className="text-sm hover:text-orange-500">
               Features
-            </a>
-            <a href="#showcase" className="text-sm hover:text-orange-500">
-              Showcase
-            </a>
-            <a href="#faq" className="text-sm hover:text-orange-500">
+            </Link>
+            <Link href="/pricing" className="text-sm hover:text-orange-500">
+              Pricing
+            </Link>
+            <Link href="/faq" className="text-sm hover:text-orange-500">
               FAQ
-            </a>
-            <a href="#testimonials" className="text-sm hover:text-orange-500">
-              Testimonials
-            </a>
+            </Link>
+            <Link href="/updates" className="text-sm hover:text-orange-500">
+              Updates
+            </Link>
             <Link href="/editor">
               <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono">START NOW</Button>
             </Link>
@@ -159,14 +159,14 @@ export default function Home() {
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link href="/pricing" className="hover:text-white">
                       Pricing
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link href="/updates" className="hover:text-white">
                       Updates
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -175,19 +175,19 @@ export default function Home() {
                 <h3 className="font-mono mb-4">SUPPORT</h3>
                 <ul className="space-y-2 text-gray-400">
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link href="/help" className="hover:text-white">
                       Help Center
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link href="/contact" className="hover:text-white">
                       Contact
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#faq" className="hover:text-white">
+                    <Link href="/faq" className="hover:text-white">
                       FAQ
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -196,14 +196,14 @@ export default function Home() {
                 <h3 className="font-mono mb-4">LEGAL</h3>
                 <ul className="space-y-2 text-gray-400">
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link href="/privacy" className="hover:text-white">
                       Privacy
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link href="/terms" className="hover:text-white">
                       Terms
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -216,13 +216,13 @@ export default function Home() {
             </div>
 
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                 <span>Twitter</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                 <span>YouTube</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                 <span>Instagram</span>
               </a>
             </div>

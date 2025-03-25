@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload } from "lucide-react"
+import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown } from "lucide-react"
 import Logo from "@/components/Logo"
 
 export default function EditorPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   // Basic state
   const [isPlaying, setIsPlaying] = useState(false)
@@ -22,11 +23,26 @@ export default function EditorPage() {
   // Refs for elements
   const fullscreenRef = useRef<HTMLDivElement>(null)
 
+  // Check for saved script content in URL
+  const keepScript = searchParams.get("keepScript")
+  
   // Script content
   const [scriptContent, setScriptContent] = useState(
     "Welcome to Teleprompter.today professional system.\n\nThis is your script content, each line will be clearly displayed during playback.\n\nThe system automatically tracks the current reading line and provides highlighting.\n\nYou can easily adjust scrolling speed, font size, and display effects.\n\nStart using it now to create a more professional presentation experience!",
   )
 
+  // Load saved script if available
+  useEffect(() => {
+    if (keepScript) {
+      try {
+        const decoded = decodeURIComponent(keepScript)
+        setScriptContent(decoded)
+      } catch (e) {
+        console.error("Failed to decode saved script:", e)
+      }
+    }
+  }, [keepScript])
+  
   // Calculate script lines
   const scriptLines = scriptContent.split("\n")
 
@@ -34,7 +50,7 @@ export default function EditorPage() {
   const adjustSpeed = (amount: number) => {
     setSpeed((prev) => {
       const newSpeed = Number.parseFloat((prev + amount).toFixed(1))
-      return Math.max(0.5, Math.min(3.0, newSpeed))
+      return Math.max(0.1, Math.min(10.0, newSpeed))
     })
   }
 
@@ -174,7 +190,7 @@ export default function EditorPage() {
                     style={{
                       fontSize: `${fontSize}px`,
                       lineHeight: `${lineHeight}`,
-                      height: `${fontSize * lineHeight}px`,
+                      minHeight: `${fontSize * lineHeight}px`,
                       display: "flex",
                       alignItems: "center",
                     }}
@@ -249,51 +265,58 @@ export default function EditorPage() {
         </div>
       </div>
 
-      {/* Main content area - horizontal split for edit and preview */}
-      <div className="flex-1 flex flex-col md:flex-row">
-        {/* Left edit area */}
-        <div
-          className={`${activeTab === "EDIT" ? "flex-1" : "md:w-1/2"} bg-gray-100 border-r border-gray-400 flex flex-col`}
-        >
-          <div className="bg-black text-white px-4 py-2 font-mono flex justify-between items-center">
-            <span>SCRIPT EDITOR</span>
-            <div className="flex space-x-2 text-xs">
-              <span>LINES: {scriptLines.length}</span>
-              <span>|</span>
-              <span>EST. TIME: {Math.ceil((scriptLines.length * 2) / speed)}s</span>
-            </div>
+      {/* Main content area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left side editor panel */}
+        <div className="flex-1 overflow-hidden bg-white flex flex-col min-w-0">
+          {/* Script editor header */}
+          <div className="bg-gray-200 px-4 py-2 flex justify-between items-center text-xs font-mono">
+            <div>SCRIPT EDITOR</div>
+            <div>LINES: {scriptLines.length} | EST. TIME: {Math.round(scriptLines.length * 2.5)}s</div>
           </div>
 
+          {/* Text area */}
           <textarea
-            className="flex-1 w-full p-4 text-gray-800 font-sans resize-none focus:outline-none focus:ring-1 focus:ring-black"
+            className="flex-1 p-4 focus:outline-none resize-none font-sans text-gray-900"
             value={scriptContent}
             onChange={(e) => setScriptContent(e.target.value)}
-            placeholder="Enter your prompt content..."
-            style={{ fontSize: "16px", lineHeight: 1.5 }}
+            placeholder="Enter your script here..."
+            style={{ fontSize: "16px", lineHeight: "1.6" }}
           />
 
-          <div className="bg-gray-300 p-3 border-t border-gray-400">
-            <div className="flex justify-between items-center">
-              <div className="font-mono text-sm">FORMAT</div>
-              <div className="flex space-x-2">
-                <Button variant="ghost" className="bg-black text-white px-2 py-1 text-xs font-mono hover:bg-gray-800">
-                  CLEAR
-                </Button>
-                <Button variant="ghost" className="bg-black text-white px-2 py-1 text-xs font-mono hover:bg-gray-800">
-                  <Upload className="w-3 h-3 mr-1" />
-                  IMPORT
-                </Button>
-                <Button variant="ghost" className="bg-black text-white px-2 py-1 text-xs font-mono hover:bg-gray-800">
-                  <Save className="w-3 h-3 mr-1" />
-                  SAVE
-                </Button>
-              </div>
+          {/* Format bar */}
+          <div className="bg-gray-200 px-4 py-2 flex justify-between items-center">
+            <div className="font-mono text-xs">FORMAT</div>
+            <div className="flex space-x-2">
+              <Button variant="ghost" className="bg-black text-white text-xs" onClick={() => setScriptContent("")}>
+                CLEAR
+              </Button>
+              <Button
+                variant="ghost"
+                className="bg-black text-white text-xs flex items-center"
+                onClick={() => {
+                  // Implement import logic
+                }}
+              >
+                <Upload className="w-3 h-3 mr-1" />
+                IMPORT
+              </Button>
+              <Button
+                variant="ghost"
+                className="bg-black text-white text-xs flex items-center"
+                onClick={() => {
+                  // Implement save logic
+                }}
+              >
+                <Save className="w-3 h-3 mr-1" />
+                SAVE
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Right preview/play area */}
-        <div className={`${activeTab === "EDIT" ? "hidden md:block md:w-1/2" : "flex-1"}`}>{renderTeleprompter()}</div>
+        {/* Right side teleprompter preview panel */}
+        {renderTeleprompter()}
       </div>
 
       {/* Bottom control panel */}
@@ -335,55 +358,16 @@ export default function EditorPage() {
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
+                <div className="text-xs text-gray-600 mt-1 text-center">Range: 0.1x - 10.0x</div>
                 <div className="flex justify-center mt-2">
                   <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                 </div>
               </div>
 
-              {/* Navigation control */}
+              {/* Combined Navigation & Display control */}
               <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">NAVIGATION</div>
-                <div className="flex justify-center gap-4">
-                  <Button
-                    variant="ghost"
-                    className="w-12 h-12 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-                    onClick={resetToStart}
-                  >
-                    <SkipBack className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-12 h-12 bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center"
-                    onClick={startDedicatedPlayback}
-                  >
-                    <Play className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-12 h-12 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-                    onClick={() => setCurrentLine(Math.min(currentLine + 1, scriptLines.length - 1))}
-                  >
-                    <SkipForward className="w-5 h-5" />
-                  </Button>
-                </div>
-                <div className="flex justify-center mt-2 space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-gray-600"></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-600"></div>
-                </div>
-              </div>
-
-              {/* Display control */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">DISPLAY</div>
+                <div className="text-center font-mono text-sm mb-2">PLAYBACK</div>
                 <div className="flex flex-col space-y-4">
-                  <Button
-                    variant="ghost"
-                    className="bg-black text-white p-2 text-xs font-mono hover:bg-gray-800 flex items-center justify-center"
-                    onClick={toggleFullscreen}
-                  >
-                    <Expand className="w-4 h-4 mr-2" />
-                    FULLSCREEN
-                  </Button>
                   <Button
                     variant="ghost"
                     className="bg-orange-500 text-white p-2 text-xs font-mono hover:bg-orange-600 flex items-center justify-center"
@@ -392,9 +376,42 @@ export default function EditorPage() {
                     <Play className="w-4 h-4 mr-2" />
                     START PLAYBACK
                   </Button>
-                  <div className="flex justify-center">
+                  <Button
+                    variant="ghost"
+                    className="bg-black text-white p-2 text-xs font-mono hover:bg-gray-800 flex items-center justify-center"
+                    onClick={toggleFullscreen}
+                  >
+                    <Expand className="w-4 h-4 mr-2" />
+                    FULLSCREEN
+                  </Button>
+                  <div className="flex justify-center mt-2 space-x-2">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
+                </div>
+              </div>
+
+              {/* Line indicator control */}
+              <div className="bg-gray-200 p-4 rounded shadow">
+                <div className="text-center font-mono text-sm mb-2">CURRENT LINE</div>
+                <div className="flex justify-between items-center">
+                  <Button
+                    variant="ghost"
+                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    onClick={() => setCurrentLine(Math.max(currentLine - 1, 0))}
+                  >
+                    <ChevronUp className="w-4 h-4" />
+                  </Button>
+                  <div className="font-mono text-xl">{currentLine + 1}</div>
+                  <Button
+                    variant="ghost"
+                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    onClick={() => setCurrentLine(Math.min(currentLine + 1, scriptLines.length - 1))}
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex justify-center mt-2">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                 </div>
               </div>
             </div>
