@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Mic, Monitor, Play, Settings, Smartphone } from "lucide-react"
+import { ArrowRight, Mic, Monitor, Play, Settings, Smartphone, ChevronRight } from "lucide-react"
 import Logo from "@/components/Logo"
 import HomeTeleprompter, { startPlayback } from "@/components/HomeTeleprompter"
 
@@ -24,9 +24,6 @@ export default function Home() {
           <div className="hidden md:flex space-x-6 items-center">
             <Link href="/features" className="text-sm hover:text-orange-500">
               Features
-            </Link>
-            <Link href="/pricing" className="text-sm hover:text-orange-500">
-              Pricing
             </Link>
             <Link href="/faq" className="text-sm hover:text-orange-500">
               FAQ
@@ -83,11 +80,11 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div id="features" className="py-16 bg-gray-100">
+      <div id="features" className="py-16 bg-black">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-2">Professional Features</h2>
-            <p className="text-gray-600">Everything you need for perfect prompting</p>
+            <h2 className="text-3xl font-bold mb-2 text-white">Professional Features</h2>
+            <p className="text-gray-400">Everything you need for perfect prompting</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -105,6 +102,7 @@ export default function Home() {
               title="Remote Control"
               description="Control from your phone or another device"
               icon={<Smartphone className="w-8 h-8" />}
+              comingSoon={true}
             />
             <FeatureCard
               title="Multiple Formats"
@@ -120,6 +118,80 @@ export default function Home() {
               title="Voice Recognition"
               description="Optional voice control for hands-free operation"
               icon={<Mic className="w-8 h-8" />}
+              comingSoon={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Core FAQ Section */}
+      <div className="py-16 bg-[#111]">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-2 text-white">Common Questions</h2>
+            <p className="text-gray-400">Quick answers to get you started</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="space-y-6">
+              <FAQItem
+                question="What is Teleprompter.today?"
+                answer="A free online teleprompter system that helps you deliver smooth presentations by displaying your script at a controlled pace directly in your browser."
+              />
+              <FAQItem
+                question="Do I need to create an account?"
+                answer="No, you can use all teleprompter features without creating an account. Simply visit the website and start using it immediately."
+              />
+            </div>
+            <div className="space-y-6">
+              <FAQItem
+                question="How do I adjust the scrolling speed?"
+                answer="Use the speed control buttons in the control panel or press the up/down arrow keys on your keyboard."
+              />
+              <FAQItem
+                question="What keyboard shortcuts are available?"
+                answer="Space = Play/Pause, Arrow Up/Down = Adjust Speed, Arrow Left/Right = Previous/Next Line, Esc = Exit Playback, H = Hide Controls"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Use Cases Section */}
+      <div className="py-16 bg-black">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-2 text-white">Perfect For</h2>
+            <p className="text-gray-400">See how others are using our teleprompter</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ShowcaseCard
+              title="Video Content"
+              description="YouTubers and content creators maintain natural eye contact while delivering scripted content"
+              features={[
+                "Script your content in advance",
+                "Maintain natural eye contact",
+                "Smooth scrolling for fluid delivery"
+              ]}
+            />
+            <ShowcaseCard
+              title="Live Presentations"
+              description="Speakers deliver polished presentations while maintaining audience engagement"
+              features={[
+                "Clear, easy-to-read text",
+                "Customizable scroll speed",
+                "Distraction-free interface"
+              ]}
+            />
+            <ShowcaseCard
+              title="Educational Content"
+              description="Educators deliver consistent, well-structured lessons while maintaining student engagement"
+              features={[
+                "Structured lesson delivery",
+                "Easy-to-follow format",
+                "Flexible speed control"
+              ]}
             />
           </div>
         </div>
@@ -157,11 +229,6 @@ export default function Home() {
                     <a href="#features" className="hover:text-white">
                       Features
                     </a>
-                  </li>
-                  <li>
-                    <Link href="/pricing" className="hover:text-white">
-                      Pricing
-                    </Link>
                   </li>
                   <li>
                     <Link href="/updates" className="hover:text-white">
@@ -233,12 +300,55 @@ export default function Home() {
   )
 }
 
-function FeatureCard({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) {
+function FeatureCard({ 
+  title, 
+  description, 
+  icon, 
+  comingSoon 
+}: { 
+  title: string; 
+  description: string; 
+  icon: React.ReactNode;
+  comingSoon?: boolean;
+}) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <div className="text-3xl mb-4">{icon}</div>
-      <h3 className="font-mono text-xl mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+    <div className="bg-[#111] p-6 rounded-none border border-gray-800 relative">
+      {comingSoon && (
+        <div className="absolute top-4 right-4">
+          <span className="font-mono text-xs border border-gray-500 px-2 py-1 text-gray-400">
+            COMING SOON
+          </span>
+        </div>
+      )}
+      <div className="text-3xl mb-4 text-orange-500">{icon}</div>
+      <h3 className="font-mono text-xl mb-2 text-white">{title}</h3>
+      <p className="text-gray-400">{description}</p>
+    </div>
+  )
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <div className="bg-black p-6 rounded-none border border-gray-800">
+      <h3 className="font-mono text-lg mb-2 text-white">{question}</h3>
+      <p className="text-gray-400">{answer}</p>
+    </div>
+  )
+}
+
+function ShowcaseCard({ title, description, features }: { title: string; description: string; features: string[] }) {
+  return (
+    <div className="bg-[#111] p-6 rounded-none border border-gray-800">
+      <h3 className="font-mono text-xl mb-3 text-white">{title}</h3>
+      <p className="text-gray-400 mb-4">{description}</p>
+      <ul className="space-y-2">
+        {features.map((feature, index) => (
+          <li key={index} className="flex items-center text-gray-400">
+            <ChevronRight className="w-4 h-4 mr-2 text-orange-500" />
+            {feature}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

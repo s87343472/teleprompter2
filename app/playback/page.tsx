@@ -28,6 +28,11 @@ export default function PlaybackPage() {
   const [showControls, setShowControls] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
   const [showEnd, setShowEnd] = useState(false)
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('center')
+  const [mirror, setMirror] = useState({
+    horizontal: false,
+    vertical: false
+  })
 
   const containerRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -195,6 +200,19 @@ export default function PlaybackPage() {
     }
   }, [isPlaying])
 
+  // 文本对齐处理函数
+  const handleTextAlign = (align: 'left' | 'center' | 'right') => {
+    setTextAlign(align)
+  }
+
+  // 镜像处理函数
+  const handleMirror = (direction: 'horizontal' | 'vertical') => {
+    setMirror(prev => ({
+      ...prev,
+      [direction]: !prev[direction]
+    }))
+  }
+
   return (
     <div
       ref={containerRef}
@@ -283,7 +301,12 @@ export default function PlaybackPage() {
 
             {/* Text lines */}
             <div className="fixed inset-0 flex flex-col items-center justify-center">
-              <div className="w-full max-w-4xl px-4">
+              <div 
+                className="w-full max-w-4xl px-4"
+                style={{
+                  transform: `${mirror.horizontal ? 'scaleX(-1)' : ''} ${mirror.vertical ? 'scaleY(-1)' : ''}`
+                }}
+              >
                 {scriptLines.map((line, index) => {
                   // Calculate position relative to current line
                   const position = index - currentLine
@@ -292,7 +315,7 @@ export default function PlaybackPage() {
                   return (
                     <div
                       key={index}
-                      className={`absolute left-0 right-0 px-8 text-center transition-all duration-500 ${
+                      className={`absolute left-0 right-0 px-8 transition-all duration-500 ${
                         position === 0 ? "text-white font-bold" : "text-gray-400"
                       }`}
                       style={{
@@ -300,6 +323,7 @@ export default function PlaybackPage() {
                         fontSize: `${fontSize}px`,
                         lineHeight: `${lineHeight}`,
                         opacity: Math.abs(position) < 5 ? 1 : 0, // Only show nearby lines
+                        textAlign: textAlign
                       }}
                     >
                       {line || " "}
@@ -342,50 +366,125 @@ export default function PlaybackPage() {
 
       {/* Bottom controls - only visible when controls are shown */}
       {showControls && (
-        <div className="bg-gray-900/80 p-4 flex justify-center space-x-6 z-50">
-          <div className="flex items-center gap-2">
+        <div className="bg-gray-900/80 p-4 flex justify-center items-center gap-8 z-50">
+          {/* Mirror controls group */}
+          <div className="flex space-x-2">
             <Button
               variant="ghost"
-              className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-              onClick={() => adjustSpeed(-0.1)}
-              title="Decrease Speed"
+              className={`w-8 h-8 ${mirror.horizontal ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+              onClick={() => handleMirror('horizontal')}
+              title="Horizontal Mirror"
             >
-              <Minus className="w-4 h-4" />
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 3v18M4 6h16M4 18h16" />
+                <path d="M7 9l-3 3 3 3M17 9l3 3-3 3" />
+              </svg>
             </Button>
-            <div className="text-xs text-white">{speed.toFixed(1)}x</div>
             <Button
               variant="ghost"
-              className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-              onClick={() => adjustSpeed(0.1)}
-              title="Increase Speed"
+              className={`w-8 h-8 ${mirror.vertical ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+              onClick={() => handleMirror('vertical')}
+              title="Vertical Mirror"
             >
-              <Plus className="w-4 h-4" />
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12h18M6 4v16M18 4v16" />
+                <path d="M9 7l3-3 3 3M9 17l3 3 3-3" />
+              </svg>
             </Button>
           </div>
-          
-          <Button
-            variant="ghost"
-            className={`w-12 h-10 ${isPlaying ? "bg-orange-500 hover:bg-orange-600" : "bg-black hover:bg-gray-800"} text-white flex items-center justify-center`}
-            onClick={togglePlay}
-            title={isPlaying ? "Pause" : "Play"}
-          >
-            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-          </Button>
-          
-          <Button
-            variant="ghost"
-            className="w-12 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
-            onClick={() => {
-              if (document.fullscreenElement) {
-                document.exitFullscreen();
-              } else {
-                document.documentElement.requestFullscreen();
-              }
-            }}
-            title="Fullscreen"
-          >
-            <Expand className="w-4 h-4" />
-          </Button>
+
+          {/* Divider */}
+          <div className="h-8 w-px bg-gray-700"></div>
+
+          {/* Text alignment controls group */}
+          <div className="flex space-x-2">
+            <Button
+              variant="ghost"
+              className={`w-8 h-8 ${textAlign === 'left' ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+              onClick={() => handleTextAlign('left')}
+              title="Left Align"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="15" y2="12" />
+                <line x1="3" y1="18" x2="18" y2="18" />
+              </svg>
+            </Button>
+            <Button
+              variant="ghost"
+              className={`w-8 h-8 ${textAlign === 'center' ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+              onClick={() => handleTextAlign('center')}
+              title="Center Align"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="6" y1="12" x2="18" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+              </svg>
+            </Button>
+            <Button
+              variant="ghost"
+              className={`w-8 h-8 ${textAlign === 'right' ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+              onClick={() => handleTextAlign('right')}
+              title="Right Align"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="9" y1="12" x2="21" y2="12" />
+                <line x1="6" y1="18" x2="21" y2="18" />
+              </svg>
+            </Button>
+          </div>
+
+          {/* Divider */}
+          <div className="h-8 w-px bg-gray-700"></div>
+
+          {/* Playback controls group */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                className="w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                onClick={() => adjustSpeed(-0.1)}
+                title="Decrease Speed"
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
+              <div className="text-xs text-white w-10 text-center">{speed.toFixed(1)}x</div>
+              <Button
+                variant="ghost"
+                className="w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                onClick={() => adjustSpeed(0.1)}
+                title="Increase Speed"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            <Button
+              variant="ghost"
+              className={`w-10 h-8 ${isPlaying ? "bg-orange-500 hover:bg-orange-600" : "bg-black hover:bg-gray-800"} text-white flex items-center justify-center`}
+              onClick={togglePlay}
+              title={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+            </Button>
+            
+            <Button
+              variant="ghost"
+              className="w-8 h-8 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+              onClick={() => {
+                if (document.fullscreenElement) {
+                  document.exitFullscreen();
+                } else {
+                  document.documentElement.requestFullscreen();
+                }
+              }}
+              title="Toggle Fullscreen"
+            >
+              <Expand className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

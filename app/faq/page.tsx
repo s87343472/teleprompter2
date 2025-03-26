@@ -15,7 +15,6 @@ export default function FAQPage() {
     { id: "all", name: "All Questions" },
     { id: "getting-started", name: "Getting Started" },
     { id: "features", name: "Features & Usage" },
-    { id: "account", name: "Account & Billing" },
     { id: "troubleshooting", name: "Troubleshooting" }
   ];
 
@@ -25,13 +24,13 @@ export default function FAQPage() {
       id: "q1",
       category: "getting-started",
       question: "What is Teleprompter.today?",
-      answer: "Teleprompter.today is a professional online teleprompter system designed for content creators, speakers, and professionals. It helps you deliver smooth presentations by displaying your script at a controlled pace without requiring expensive hardware."
+      answer: "Teleprompter.today is a free online teleprompter system designed for content creators, speakers, and professionals. It helps you deliver smooth presentations by displaying your script at a controlled pace directly in your browser."
     },
     {
       id: "q2",
       category: "getting-started",
       question: "Do I need to create an account to use the teleprompter?",
-      answer: "No, you can use the basic teleprompter features without creating an account. However, creating a free account allows you to save scripts, access them across devices, and use additional features."
+      answer: "No, you can use all teleprompter features without creating an account. Simply visit the website and start using it immediately."
     },
     {
       id: "q3",
@@ -43,73 +42,43 @@ export default function FAQPage() {
       id: "q4",
       category: "features",
       question: "How do I adjust the scrolling speed?",
-      answer: "You can adjust the scrolling speed in several ways: using the speed control buttons in the control panel, pressing the up/down arrow keys on your keyboard, or using the remote control feature on a second device."
+      answer: "You can adjust the scrolling speed using the speed control buttons in the control panel or by pressing the up/down arrow keys on your keyboard. Remote control feature from a second device is coming soon."
     },
     {
       id: "q5",
       category: "features",
       question: "What keyboard shortcuts are available?",
-      answer: "We offer several keyboard shortcuts for efficient control: Space = Play/Pause, Arrow Up/Down = Adjust Speed, Arrow Left/Right = Previous/Next Line, Esc = Exit Playback, H = Hide Controls, and many more. Press '?' during playback to see the full list."
+      answer: "We offer several keyboard shortcuts for efficient control: Space = Play/Pause, Arrow Up/Down = Adjust Speed, Arrow Left/Right = Previous/Next Line, Esc = Exit Playback, H = Hide Controls."
     },
     {
       id: "q6",
       category: "features",
-      question: "Can I format my text with bold, italics, or different fonts?",
-      answer: "Yes, our Pro and Enterprise plans support text formatting including bold, italics, underlining, and custom fonts. The Free plan includes basic formatting options."
+      question: "Can I format my text?",
+      answer: "Currently, we support basic text display. Text formatting features like bold, italics, and custom fonts are planned for future updates."
     },
     {
       id: "q7",
       category: "features",
       question: "Is it possible to control the teleprompter from another device?",
-      answer: "Yes, our remote control feature allows you to control the teleprompter from a second device. This is particularly useful for presentations where you need to stand away from your computer."
+      answer: "Remote control functionality is currently under development and will be available soon. This feature will allow you to control the teleprompter from a second device, which is particularly useful for presentations."
     },
     {
       id: "q8",
-      category: "account",
-      question: "What are the differences between the Free, Pro, and Enterprise plans?",
-      answer: "The Free plan offers basic teleprompter functionality with limited storage. The Pro plan adds custom fonts, unlimited scripts, remote control, and priority support. The Enterprise plan includes team collaboration, script encryption, API access, and 24/7 support."
-    },
-    {
-      id: "q9",
-      category: "account",
-      question: "How do I upgrade or downgrade my subscription?",
-      answer: "You can upgrade or downgrade your subscription at any time through the Account Settings page. Changes will take effect immediately for upgrades or at the end of your current billing cycle for downgrades."
-    },
-    {
-      id: "q10",
-      category: "account",
-      question: "Do you offer refunds?",
-      answer: "We offer a 14-day money-back guarantee for all paid plans. If you're not satisfied with our service, you can request a refund within 14 days of your initial purchase."
-    },
-    {
-      id: "q11",
       category: "troubleshooting",
       question: "The teleprompter is lagging or stuttering. How can I fix this?",
       answer: "Performance issues can be caused by various factors. Try refreshing the page, using a more recent browser version, closing other resource-intensive applications, or switching to a device with better performance."
     },
     {
-      id: "q12",
+      id: "q9",
       category: "troubleshooting",
       question: "How do I report a bug or request a feature?",
       answer: "You can report bugs or request features through our Contact page. Please provide as much detail as possible, including steps to reproduce the issue, your device/browser information, and any error messages you received."
     },
     {
-      id: "q13",
+      id: "q10",
       category: "troubleshooting",
       question: "The text isn't displaying correctly on my screen. What should I do?",
-      answer: "Try adjusting the font size and line spacing in the settings panel. If the issue persists, you might need to check your browser's zoom level or try a different browser. For high-DPI displays, you can enable the 'High Resolution Text' option in settings."
-    },
-    {
-      id: "q14",
-      category: "features",
-      question: "Can I import scripts from Word or Google Docs?",
-      answer: "Yes, you can import scripts from various formats including Word documents, Google Docs, plain text, and PDFs. Simply use the Import option in the editor and select your file."
-    },
-    {
-      id: "q15",
-      category: "account",
-      question: "How secure are my scripts?",
-      answer: "We take security seriously. All data is encrypted in transit and at rest. Enterprise plans include additional script encryption options. We never share your content with third parties without your explicit consent."
+      answer: "Try adjusting the font size and line spacing in the settings panel. If the issue persists, you might need to check your browser's zoom level or try a different browser."
     }
   ];
 

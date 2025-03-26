@@ -32,100 +32,75 @@ export default function UpdatesPage() {
             {/* Update Items */}
             <div className="space-y-16 relative">
               <UpdateItem 
-                version="v2.0.0" 
-                date="Coming Soon" 
-                title="Major Update: Collaboration Features"
-                badges={[{ text: "Coming Soon", color: "blue" }]}
-                description="We're working on a complete overhaul of our collaboration features, allowing teams to work together seamlessly."
-                features={[
-                  "Real-time collaborative editing",
-                  "Team workspaces",
-                  "Permission management",
-                  "Comment and feedback system",
-                  "Version history and comparison",
-                  "Advanced sharing options"
+                version="Coming Soon" 
+                date="In Development" 
+                title="Remote Control & Voice Recognition"
+                badges={[
+                  { text: "Coming Soon", color: "blue" },
+                  { text: "New Feature", color: "purple" }
                 ]}
-                imageSrc="/placeholder.jpg"
+                description="We are developing two important new features to enhance your teleprompter experience"
+                features={[
+                  "Remote Control: Control teleprompter from your phone or another device",
+                  "- Real-time speed adjustment",
+                  "- Play/pause/reset controls",
+                  "- Multi-device connection support",
+                  "Voice Recognition: Control with voice commands",
+                  "- Hands-free operation",
+                  "- Custom voice commands",
+                  "- Multi-language support"
+                ]}
               />
 
               <UpdateItem 
-                version="v1.8.2" 
-                date="March 15, 2024" 
-                title="Performance Improvements and Bug Fixes"
+                version="v0.1.2" 
+                date="March 26, 2024" 
+                title="Enhanced Playback Controls & UI Optimization"
                 badges={[{ text: "Latest", color: "green" }]}
-                description="This update focuses on improving performance and fixing several bugs reported by our users."
+                description="Improved playback experience with new text controls and streamlined interface"
                 features={[
-                  "50% faster script loading times",
-                  "Reduced memory usage for large scripts",
-                  "Fixed text jumping issue during fast scrolling",
-                  "Improved mobile responsiveness",
-                  "Fixed font rendering on high-DPI displays",
-                  "Added keyboard shortcut guide (press ? to view)"
+                  "Added text alignment controls (left, center, right)",
+                  "Added mirror display options (horizontal, vertical)",
+                  "Reorganized playback control bar for better usability",
+                  "Optimized FONT panel layout in editor",
+                  "Added visual feedback for active controls",
+                  "Improved control bar grouping and spacing",
+                  "Added tooltips for all control buttons",
+                  "Unified button sizes and styles"
                 ]}
               />
 
               <UpdateItem 
-                version="v1.8.0" 
-                date="February 28, 2024" 
-                title="Voice Control and Accessibility"
-                badges={[{ text: "Feature", color: "purple" }]}
-                description="We've added voice control capabilities and improved accessibility across the platform."
+                version="v0.1.1" 
+                date="March 24, 2024" 
+                title="Core Features Optimization"
+                badges={[{ text: "Update", color: "orange" }]}
+                description="Optimized core teleprompter functionality and user experience"
                 features={[
-                  "Voice commands for controlling playback",
-                  "Improved screen reader compatibility",
-                  "Added high contrast mode",
-                  "Keyboard accessibility enhancements",
-                  "Custom voice command setup",
-                  "Voice-activated navigation"
-                ]}
-                imageSrc="/placeholder.jpg"
-              />
-
-              <UpdateItem 
-                version="v1.7.5" 
-                date="February 10, 2024" 
-                title="New Templates and Export Options"
-                description="We've expanded our template library and added new export options."
-                features={[
-                  "10 new professional script templates",
-                  "PDF export with formatting options",
-                  "Plain text export",
-                  "Import from Google Docs",
-                  "Import from Word documents",
-                  "Custom template creation"
+                  "Added click sound feedback",
+                  "Optimized teleprompter component state initialization",
+                  "Fixed empty text issue in teleprompter preview",
+                  "Fixed 404 error for audio resources",
+                  "Fixed dynamic style rendering deployment issues"
                 ]}
               />
 
               <UpdateItem 
-                version="v1.7.0" 
-                date="January 22, 2024" 
-                title="Remote Control Update"
-                badges={[{ text: "Feature", color: "purple" }]}
-                description="Control your teleprompter from a second device with our new remote control feature."
-                features={[
-                  "QR code pairing for quick connection",
-                  "Real-time speed adjustment from remote device",
-                  "Play/pause/reset controls",
-                  "Line jumping capability",
-                  "Multiple remote connections",
-                  "Low-latency synchronization"
-                ]}
-                imageSrc="/placeholder.jpg"
-              />
-
-              <UpdateItem 
-                version="v1.0.0" 
-                date="November 15, 2023" 
+                version="v0.1.0" 
+                date="March 24, 2024" 
                 title="Initial Release"
-                badges={[{ text: "Launch", color: "orange" }]}
-                description="The first public release of our professional teleprompter platform."
+                badges={[{ text: "Release", color: "orange" }]}
+                description="First public release with basic teleprompter functionality"
                 features={[
-                  "Basic teleprompter functionality",
-                  "Speed control (0.5x - 3.0x)",
-                  "Text editing with formatting",
-                  "Line tracking",
-                  "Full-screen mode",
-                  "Basic settings and customization"
+                  "Created basic Next.js application framework",
+                  "Implemented homepage UI design and layout",
+                  "Added HomeTeleprompter preview component",
+                  "Added basic editor page",
+                  "Added playback controls",
+                  "Optimized text scrolling and display logic",
+                  "Fixed prompt bar positioning",
+                  "Fixed text playback positioning issues",
+                  "Fixed state reset issues after playback ends"
                 ]}
               />
             </div>

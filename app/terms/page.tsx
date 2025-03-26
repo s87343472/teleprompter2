@@ -45,15 +45,7 @@ export default function TermsOfServicePage() {
                 You are responsible for safeguarding the password and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account or any other breach of security.
               </p>
 
-              <h2>4. Subscription and Payment</h2>
-              <p>
-                Some aspects of the Service require payment of fees. You will be billed in advance on a recurring basis, depending on the subscription plan you select. You may cancel your subscription at any time, but refunds are limited to what is described in our refund policy.
-              </p>
-              <p>
-                We reserve the right to change our prices at any time. If we change pricing, we will provide notice of the change on the Site or by email, at our option, at least 30 days before the change takes effect.
-              </p>
-
-              <h2>5. User Content</h2>
+              <h2>4. User Content</h2>
               <p>
                 The Service allows you to create, upload, store, and share content, including text, scripts, and other materials ("User Content"). You retain all rights in, and are solely responsible for, your User Content.
               </p>
@@ -69,7 +61,7 @@ export default function TermsOfServicePage() {
                 <li>Your User Content complies with these Terms and applicable law</li>
               </ul>
 
-              <h2>6. Prohibited Uses</h2>
+              <h2>5. Prohibited Uses</h2>
               <p>
                 You agree not to use the Service:
               </p>
@@ -83,7 +75,7 @@ export default function TermsOfServicePage() {
                 <li>To harvest, collect, or gather user data without consent</li>
               </ul>
 
-              <h2>7. Intellectual Property</h2>
+              <h2>6. Intellectual Property</h2>
               <p>
                 The Service and its original content (excluding User Content), features, and functionality are and will remain the exclusive property of Teleprompter.today and its licensors. The Service is protected by copyright, trademark, and other laws.
               </p>
@@ -91,7 +83,7 @@ export default function TermsOfServicePage() {
                 Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Teleprompter.today.
               </p>
 
-              <h2>8. Termination</h2>
+              <h2>7. Termination</h2>
               <p>
                 We may terminate or suspend your account and access to the Service immediately, without prior notice or liability, for any reason, including without limitation if you breach the Terms.
               </p>
@@ -99,7 +91,7 @@ export default function TermsOfServicePage() {
                 Upon termination, your right to use the Service will immediately cease. If you wish to terminate your account, you may simply discontinue using the Service or contact us to request account deletion.
               </p>
 
-              <h2>9. Limitation of Liability</h2>
+              <h2>8. Limitation of Liability</h2>
               <p>
                 In no event shall Teleprompter.today, its directors, employees, partners, agents, suppliers, or affiliates be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:
               </p>
@@ -110,12 +102,12 @@ export default function TermsOfServicePage() {
                 <li>Unauthorized access, use, or alteration of your transmissions or content</li>
               </ul>
 
-              <h2>10. Disclaimer</h2>
+              <h2>9. Disclaimer</h2>
               <p>
                 Your use of the Service is at your sole risk. The Service is provided on an "AS IS" and "AS AVAILABLE" basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance.
               </p>
 
-              <h2>11. Governing Law</h2>
+              <h2>10. Governing Law</h2>
               <p>
                 These Terms shall be governed and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law provisions.
               </p>
@@ -123,7 +115,7 @@ export default function TermsOfServicePage() {
                 Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.
               </p>
 
-              <h2>12. Changes to Terms</h2>
+              <h2>11. Changes to Terms</h2>
               <p>
                 We reserve the right to modify or replace these Terms at any time. We will provide notice of any changes by posting the new Terms on this page and updating the "Last Updated" date.
               </p>
@@ -131,7 +123,7 @@ export default function TermsOfServicePage() {
                 By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Service.
               </p>
 
-              <h2>13. Contact Us</h2>
+              <h2>12. Contact Us</h2>
               <p>
                 If you have any questions about these Terms, please contact us at:
               </p>
