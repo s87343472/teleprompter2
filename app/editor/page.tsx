@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash } from "lucide-react"
 import Logo from "@/components/Logo"
 
-export default function EditorPage() {
+function EditorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -777,6 +777,14 @@ export default function EditorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditorContent />
+    </Suspense>
   )
 }
 

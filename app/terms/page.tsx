@@ -3,19 +3,8 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Terms of Service - Teleprompter.today",
-  description: "Read our terms of service to understand the rules and guidelines for using our professional teleprompter system.",
-  keywords: ["terms of service", "user agreement", "legal terms", "service terms", "conditions"],
-  openGraph: {
-    title: "Terms of Service - Teleprompter.today",
-    description: "Understand our terms of service for using our professional teleprompter system",
-  }
-}
-
-export default function TermsOfServicePage() {
+export default function TermsPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Header */}
