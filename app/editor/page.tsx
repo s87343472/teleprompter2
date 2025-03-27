@@ -345,7 +345,7 @@ function EditorContent() {
               {/* Text alignment controls */}
               <Button
                 variant="ghost"
-                className={`w-8 h-8 ${textAlign === 'left' ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+                className={`w-8 h-8 ${textAlign === 'left' ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
                 onClick={() => handleTextAlign('left')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -356,7 +356,7 @@ function EditorContent() {
               </Button>
               <Button
                 variant="ghost"
-                className={`w-8 h-8 ${textAlign === 'center' ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+                className={`w-8 h-8 ${textAlign === 'center' ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
                 onClick={() => handleTextAlign('center')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -367,7 +367,7 @@ function EditorContent() {
               </Button>
               <Button
                 variant="ghost"
-                className={`w-8 h-8 ${textAlign === 'right' ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+                className={`w-8 h-8 ${textAlign === 'right' ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
                 onClick={() => handleTextAlign('right')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -381,14 +381,14 @@ function EditorContent() {
             <div className="flex space-x-4">
               <Button
                 variant="ghost"
-                className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                 onClick={() => adjustSpeed(-0.1)}
               >
                 <Minus className="w-4 h-4" />
               </Button>
               <Button
                 variant="ghost"
-                className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                 onClick={resetToStart}
               >
                 <SkipBack className="w-4 h-4" />
@@ -402,7 +402,7 @@ function EditorContent() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                 onClick={() => adjustSpeed(0.1)}
               >
                 <Plus className="w-4 h-4" />
@@ -413,7 +413,7 @@ function EditorContent() {
               {/* Mirror controls */}
               <Button
                 variant="ghost"
-                className={`w-8 h-8 ${mirror.horizontal ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+                className={`w-8 h-8 ${mirror.horizontal ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
                 onClick={() => handleMirror('horizontal')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -423,7 +423,7 @@ function EditorContent() {
               </Button>
               <Button
                 variant="ghost"
-                className={`w-8 h-8 ${mirror.vertical ? 'bg-gray-700' : 'bg-black'} text-white flex items-center justify-center hover:bg-gray-800`}
+                className={`w-8 h-8 ${mirror.vertical ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
                 onClick={() => handleMirror('vertical')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -526,7 +526,7 @@ function EditorContent() {
                 <div className="flex justify-between items-center">
                   <Button
                     variant="ghost"
-                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                     onClick={() => adjustSpeed(-0.1)}
                   >
                     <Minus className="w-4 h-4" />
@@ -534,7 +534,7 @@ function EditorContent() {
                   <div className="font-mono text-xl">{speed.toFixed(1)}</div>
                   <Button
                     variant="ghost"
-                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                     onClick={() => adjustSpeed(0.1)}
                   >
                     <Plus className="w-4 h-4" />
@@ -578,7 +578,7 @@ function EditorContent() {
                 <div className="flex justify-between items-center">
                   <Button
                     variant="ghost"
-                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                     onClick={() => setCurrentLine(Math.max(currentLine - 1, 0))}
                   >
                     <ChevronUp className="w-4 h-4" />
@@ -586,7 +586,7 @@ function EditorContent() {
                   <div className="font-mono text-xl">{currentLine + 1}</div>
                   <Button
                     variant="ghost"
-                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                     onClick={() => setCurrentLine(Math.min(currentLine + 1, scriptLines.length - 1))}
                   >
                     <ChevronDown className="w-4 h-4" />
@@ -607,7 +607,7 @@ function EditorContent() {
                 <div className="flex justify-between items-center">
                   <Button
                     variant="ghost"
-                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                     onClick={() => adjustFontSize(-2)}
                   >
                     <Minus className="w-4 h-4" />
@@ -615,7 +615,7 @@ function EditorContent() {
                   <div className="font-mono text-xl">{fontSize}px</div>
                   <Button
                     variant="ghost"
-                    className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                     onClick={() => adjustFontSize(2)}
                   >
                     <Plus className="w-4 h-4" />
@@ -634,8 +634,8 @@ function EditorContent() {
                   <Button 
                     variant="ghost" 
                     className={`${
-                      fontStyle.weight === 'normal' ? 'bg-black' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:bg-gray-800`}
+                      fontStyle.weight === 'normal' ? 'bg-gray-900' : 'bg-gray-700'
+                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
                     onClick={() => handleFontStyleChange('normal')}
                   >
                     NORMAL
@@ -643,8 +643,8 @@ function EditorContent() {
                   <Button 
                     variant="ghost" 
                     className={`${
-                      fontStyle.weight === 'bold' ? 'bg-black' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:bg-gray-800`}
+                      fontStyle.weight === 'bold' ? 'bg-gray-900' : 'bg-gray-700'
+                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
                     onClick={() => handleFontStyleChange('bold')}
                   >
                     BOLD
@@ -652,8 +652,8 @@ function EditorContent() {
                   <Button 
                     variant="ghost" 
                     className={`${
-                      fontStyle.family === 'sans' ? 'bg-black' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:bg-gray-800`}
+                      fontStyle.family === 'sans' ? 'bg-gray-900' : 'bg-gray-700'
+                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
                     onClick={() => handleFontStyleChange('sans')}
                   >
                     SANS
@@ -661,8 +661,8 @@ function EditorContent() {
                   <Button 
                     variant="ghost" 
                     className={`${
-                      fontStyle.family === 'serif' ? 'bg-black' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:bg-gray-800`}
+                      fontStyle.family === 'serif' ? 'bg-gray-900' : 'bg-gray-700'
+                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
                     onClick={() => handleFontStyleChange('serif')}
                   >
                     SERIF
@@ -683,28 +683,28 @@ function EditorContent() {
                 <div className="grid grid-cols-2 gap-2">
                   <Button 
                     variant="ghost" 
-                    className="bg-black text-white p-2 text-xs font-mono hover:bg-gray-800"
+                    className="bg-gray-900 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleUpperCase}
                   >
                     UPPERCASE
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600"
+                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleLowerCase}
                   >
                     LOWERCASE
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600"
+                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleClear}
                   >
                     CLEAR ALL
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600"
+                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleAddMarker}
                   >
                     ADD MARKER
@@ -718,7 +718,7 @@ function EditorContent() {
                 <div className="grid grid-cols-2 gap-2">
                   <Button 
                     variant="ghost" 
-                    className="bg-black text-white p-2 text-xs font-mono hover:bg-gray-800"
+                    className="bg-gray-900 text-white p-2 text-xs font-mono hover:text-orange-500 flex items-center justify-center"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Upload className="w-3 h-3 mr-1" />
@@ -726,14 +726,14 @@ function EditorContent() {
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600"
+                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleExport}
                   >
                     EXPORT
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600"
+                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleSave}
                   >
                     <Save className="w-3 h-3 mr-1" />
@@ -741,7 +741,7 @@ function EditorContent() {
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600"
+                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={() => alert('Templates feature coming soon!')}
                   >
                     TEMPLATES

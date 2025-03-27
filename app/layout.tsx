@@ -2,6 +2,7 @@ import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Providers } from "./providers"
+import GoogleAnalytics from "./components/GoogleAnalytics"
 
 export const metadata: Metadata = {
   title: "Teleprompter.today - Professional Teleprompter System",
@@ -27,6 +28,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <GoogleAnalytics />
       </head>
       <body>
         <Providers>

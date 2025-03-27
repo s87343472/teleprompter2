@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
 
 export default function UpdatesPage() {
   return (
@@ -32,103 +32,61 @@ export default function UpdatesPage() {
             {/* Update Items */}
             <div className="space-y-16 relative">
               <UpdateItem 
-                version="Coming Soon" 
-                date="In Development" 
-                title="Remote Control & Voice Recognition"
-                badges={[
-                  { text: "Coming Soon", color: "blue" },
-                  { text: "New Feature", color: "purple" }
-                ]}
-                description="We are developing two important new features to enhance your teleprompter experience"
-                features={[
-                  "Remote Control: Control teleprompter from your phone or another device",
-                  "- Real-time speed adjustment",
-                  "- Play/pause/reset controls",
-                  "- Multi-device connection support",
-                  "Voice Recognition: Control with voice commands",
-                  "- Hands-free operation",
-                  "- Custom voice commands",
-                  "- Multi-language support"
-                ]}
-              />
-
-              <UpdateItem 
-                version="v0.1.2" 
-                date="March 26, 2024" 
-                title="Enhanced Playback Controls & UI Optimization"
+                version="1.0.3" 
+                date="March 27, 2024" 
+                title="UI Enhancement & Analytics Integration"
                 badges={[{ text: "Latest", color: "green" }]}
-                description="Improved playback experience with new text controls and streamlined interface"
+                description="Improved button interactions and added analytics support"
                 features={[
-                  "Added text alignment controls (left, center, right)",
-                  "Added mirror display options (horizontal, vertical)",
-                  "Reorganized playback control bar for better usability",
-                  "Optimized FONT panel layout in editor",
-                  "Added visual feedback for active controls",
-                  "Improved control bar grouping and spacing",
-                  "Added tooltips for all control buttons",
-                  "Unified button sizes and styles"
+                  "Enhanced button hover states with orange text highlight for better visibility",
+                  "Improved dark mode button contrast and accessibility",
+                  "Added Google Analytics integration for better user insights"
                 ]}
               />
 
               <UpdateItem 
-                version="v0.1.1" 
-                date="March 24, 2024" 
-                title="Core Features Optimization"
-                badges={[{ text: "Update", color: "orange" }]}
-                description="Optimized core teleprompter functionality and user experience"
+                version="1.0.2" 
+                date="March 26, 2024" 
+                title="Text Controls & Display Options"
+                badges={[{ text: "Feature", color: "purple" }]}
+                description="Added new text formatting and display controls"
                 features={[
-                  "Added click sound feedback",
-                  "Optimized teleprompter component state initialization",
-                  "Fixed empty text issue in teleprompter preview",
-                  "Fixed 404 error for audio resources",
-                  "Fixed dynamic style rendering deployment issues"
+                  "Added font style controls (Normal, Bold, Sans, Serif)",
+                  "Implemented text alignment options (Left, Center, Right)",
+                  "Added mirror mode for horizontal and vertical text flipping",
+                  "Improved playback controls with dedicated fullscreen mode"
                 ]}
               />
 
               <UpdateItem 
-                version="v0.1.0" 
+                version="1.0.1" 
+                date="March 25, 2024" 
+                title="Import/Export & Text Tools"
+                badges={[{ text: "Feature", color: "purple" }]}
+                description="Added file management and text transformation features"
+                features={[
+                  "Added import/export functionality for scripts",
+                  "Implemented file saving in Markdown format",
+                  "Added text transformation tools (UPPERCASE, lowercase)",
+                  "Improved line tracking with visual indicators"
+                ]}
+              />
+
+              <UpdateItem 
+                version="1.0.0" 
                 date="March 24, 2024" 
                 title="Initial Release"
                 badges={[{ text: "Release", color: "orange" }]}
-                description="First public release with basic teleprompter functionality"
+                description="First public release with core teleprompter functionality"
                 features={[
-                  "Created basic Next.js application framework",
-                  "Implemented homepage UI design and layout",
-                  "Added HomeTeleprompter preview component",
-                  "Added basic editor page",
-                  "Added playback controls",
-                  "Optimized text scrolling and display logic",
-                  "Fixed prompt bar positioning",
-                  "Fixed text playback positioning issues",
-                  "Fixed state reset issues after playback ends"
+                  "Initial release of Teleprompter.today",
+                  "Basic teleprompter functionality with speed control",
+                  "Real-time preview with adjustable font size",
+                  "Line-by-line tracking system",
+                  "Estimated reading time calculation"
                 ]}
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Subscribe to Updates */}
-      <section className="py-16 bg-black text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-6">Stay in the Loop</h2>
-          <p className="text-gray-400 text-xl max-w-3xl mx-auto mb-8">
-            Subscribe to our newsletter to get notified about new features and updates
-          </p>
-          <div className="max-w-md mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="flex-grow px-4 py-3 rounded-md"
-              />
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3">
-                Subscribe
-              </Button>
-            </div>
-            <p className="text-gray-500 text-sm mt-4">
-              We'll never share your email. Unsubscribe at any time.
-            </p>
           </div>
         </div>
       </section>
@@ -164,10 +122,9 @@ interface UpdateItemProps {
   description: string;
   features: string[];
   badges?: BadgeProps[];
-  imageSrc?: string;
 }
 
-function UpdateItem({ version, date, title, description, features, badges, imageSrc }: UpdateItemProps) {
+function UpdateItem({ version, date, title, description, features, badges }: UpdateItemProps) {
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start">
       {/* Version & Date (Left side on desktop) */}
@@ -188,16 +145,6 @@ function UpdateItem({ version, date, title, description, features, badges, image
         </div>
         <h3 className="text-2xl font-bold mb-2">{title}</h3>
         <p className="text-gray-600 mb-4">{description}</p>
-        
-        {imageSrc && (
-          <div className="mb-4">
-            <img 
-              src={imageSrc} 
-              alt={title} 
-              className="w-full h-48 object-cover rounded-lg"
-            />
-          </div>
-        )}
         
         <h4 className="font-semibold mb-2">What's New:</h4>
         <ul className="list-disc pl-5 text-gray-600 space-y-1">

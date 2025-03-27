@@ -17,6 +17,7 @@ interface ControlPanelProps {
   currentLine: number
   setCurrentLine: (line: number) => void
   scriptLines: string[]
+  fontStyle: { weight: string }
 }
 
 const ControlPanel = ({
@@ -60,7 +61,7 @@ const ControlPanel = ({
               <div className="flex justify-between items-center">
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => adjustSpeed(-0.1)}
                 >
                   <Minus className="w-4 h-4" />
@@ -68,7 +69,7 @@ const ControlPanel = ({
                 <div className="font-mono text-xl">{speed.toFixed(1)}</div>
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => adjustSpeed(0.1)}
                 >
                   <Plus className="w-4 h-4" />
@@ -86,7 +87,7 @@ const ControlPanel = ({
               <div className="flex flex-col space-y-4">
                 <Button
                   variant="ghost"
-                  className={`w-full ${isPlaying ? "bg-orange-500 hover:bg-orange-600" : "bg-black hover:bg-gray-800"} text-white flex items-center justify-center p-2 text-xs font-mono`}
+                  className={`w-full ${isPlaying ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-900 text-white hover:text-orange-500"} flex items-center justify-center p-2 text-xs font-mono`}
                   onClick={togglePlay}
                 >
                   {isPlaying ? <X className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
@@ -94,7 +95,7 @@ const ControlPanel = ({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full bg-black text-white p-2 text-xs font-mono hover:bg-gray-800 flex items-center justify-center"
+                  className="w-full bg-gray-900 text-white p-2 text-xs font-mono hover:text-orange-500 flex items-center justify-center"
                   onClick={resetToStart}
                 >
                   <SkipBack className="w-4 h-4 mr-2" />
@@ -112,7 +113,7 @@ const ControlPanel = ({
               <div className="flex justify-between items-center">
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => setCurrentLine(Math.max(currentLine - 1, 0))}
                 >
                   <ChevronUp className="w-4 h-4" />
@@ -120,7 +121,7 @@ const ControlPanel = ({
                 <div className="font-mono text-xl">{currentLine + 1}</div>
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => setCurrentLine(Math.min(currentLine + 1, scriptLines.length - 1))}
                 >
                   <ChevronDown className="w-4 h-4" />
@@ -141,7 +142,7 @@ const ControlPanel = ({
               <div className="flex justify-between items-center">
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => adjustFontSize(-2)}
                 >
                   <Minus className="w-4 h-4" />
@@ -149,7 +150,7 @@ const ControlPanel = ({
                 <div className="font-mono text-xl">{fontSize}px</div>
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => adjustFontSize(2)}
                 >
                   <Plus className="w-4 h-4" />
@@ -163,7 +164,7 @@ const ControlPanel = ({
               <div className="flex justify-between items-center">
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => adjustLineHeight(-0.1)}
                 >
                   <Minus className="w-4 h-4" />
@@ -171,7 +172,7 @@ const ControlPanel = ({
                 <div className="font-mono text-xl">{lineHeight.toFixed(1)}</div>
                 <Button
                   variant="ghost"
-                  className="w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-gray-800"
+                  className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
                   onClick={() => adjustLineHeight(0.1)}
                 >
                   <Plus className="w-4 h-4" />
@@ -183,7 +184,13 @@ const ControlPanel = ({
             <div className="bg-gray-200 p-4 rounded shadow">
               <div className="text-center font-mono text-sm mb-2">FONT STYLE</div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost" className="bg-black text-white p-2 text-xs font-mono hover:bg-gray-800">
+                <Button
+                  variant="ghost"
+                  className={`${
+                    fontStyle.weight === 'normal' ? 'bg-gray-900' : 'bg-gray-700'
+                  } text-white p-2 text-xs font-mono hover:text-orange-500`}
+                  onClick={() => handleFontStyleChange('normal')}
+                >
                   NORMAL
                 </Button>
                 <Button variant="ghost" className="bg-gray-700 text-white p-2 text-xs font-mono hover:bg-gray-600">
