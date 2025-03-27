@@ -204,11 +204,18 @@ export default function Home() {
           <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
             Join thousands of creators and professionals who use our teleprompter daily.
           </p>
-          <Link href="/editor">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 font-mono text-lg">
-              START FOR FREE
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/editor">
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg">
+                Start Using
+              </Button>
+            </Link>
+            <a href="mailto:support@teleprompter.today">
+              <Button variant="outline" className="text-white border-white hover:bg-gray-800 px-8 py-3 text-lg">
+                Contact Us
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -247,9 +254,9 @@ export default function Home() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/contact" className="hover:text-white">
+                    <a href="mailto:support@teleprompter.today" className="hover:text-white">
                       Contact
-                    </Link>
+                    </a>
                   </li>
                   <li>
                     <Link href="/faq" className="hover:text-white">
@@ -280,18 +287,6 @@ export default function Home() {
           <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm">
               © {new Date().getFullYear()} Teleprompter.today. All rights reserved.
-            </div>
-
-            <div className="flex space-x-4 mt-4 md:mt-0">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                <span>Twitter</span>
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                <span>YouTube</span>
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                <span>Instagram</span>
-              </a>
             </div>
           </div>
         </div>

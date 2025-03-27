@@ -5,8 +5,46 @@ import { Providers } from "./providers"
 import GoogleAnalytics from "./components/GoogleAnalytics"
 
 export const metadata: Metadata = {
-  title: "Teleprompter.today - Professional Teleprompter System",
-  description: "Fast, reliable, and customizable teleprompter for creators, speakers, and professionals.",
+  metadataBase: new URL("https://teleprompter.today"),
+  title: {
+    default: "Teleprompter.today - Professional Online Teleprompter",
+    template: "%s | Teleprompter.today"
+  },
+  description: "Professional online teleprompter for creators, speakers, and professionals. Free, easy-to-use, and feature-rich.",
+  keywords: ["teleprompter", "online teleprompter", "free teleprompter", "professional teleprompter", "speech tool", "presentation tool"],
+  authors: [{ name: "Teleprompter.today" }],
+  creator: "Teleprompter.today",
+  publisher: "Teleprompter.today",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://teleprompter.today",
+    siteName: "Teleprompter.today",
+    title: "Professional Online Teleprompter",
+    description: "Professional online teleprompter for creators, speakers, and professionals. Free, easy-to-use, and feature-rich.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Teleprompter.today - Professional Online Teleprompter"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Teleprompter.today - Professional Online Teleprompter",
+    description: "Professional online teleprompter for creators, speakers, and professionals",
+    images: ["/og-image.jpg"]
+  },
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },

@@ -3,6 +3,17 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Privacy Policy - Teleprompter.today",
+  description: "Read our privacy policy to understand how we collect, use, and protect your data when using our professional teleprompter system.",
+  keywords: ["privacy policy", "data protection", "user privacy", "teleprompter privacy", "terms"],
+  openGraph: {
+    title: "Privacy Policy - Teleprompter.today",
+    description: "Learn how we protect your privacy when using our professional teleprompter system",
+  }
+}
 
 export default function PrivacyPolicyPage() {
   return (
@@ -15,7 +26,7 @@ export default function PrivacyPolicyPage() {
             Last Updated: March 24, 2024
           </p>
           <Link href="/">
-            <Button variant="outline" className="text-white border-white hover:bg-gray-800">
+            <Button variant="outline" className="text-gray-100 border-gray-100 hover:bg-gray-800 hover:text-orange-500">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
             </Button>
           </Link>

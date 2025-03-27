@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, Search, Book, Video, MessageCircle, FileText, ExternalLink, ChevronRight } from "lucide-react"
+import { ArrowLeft, Search, Book, MessageCircle, FileText, ExternalLink, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function HelpCenterPage() {
@@ -26,7 +26,7 @@ export default function HelpCenterPage() {
           </div>
           <div className="mt-4">
             <Link href="/">
-              <Button variant="outline" className="text-white border-white hover:bg-gray-800">
+              <Button variant="outline" className="text-gray-100 border-gray-100 hover:bg-gray-800 hover:text-orange-500">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
               </Button>
             </Link>
@@ -39,18 +39,12 @@ export default function HelpCenterPage() {
         <div className="container mx-auto px-6">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-bold mb-6 text-center">How can we help you today?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <QuickLink 
                 icon={<Book className="h-8 w-8 text-orange-500" />}
                 title="User Guides"
                 description="Detailed guides on using the teleprompter"
                 href="#guides"
-              />
-              <QuickLink 
-                icon={<Video className="h-8 w-8 text-orange-500" />}
-                title="Video Tutorials"
-                description="Step-by-step video instructions"
-                href="#tutorials"
               />
               <QuickLink 
                 icon={<MessageCircle className="h-8 w-8 text-orange-500" />}
@@ -92,20 +86,8 @@ export default function HelpCenterPage() {
                       </a>
                     </li>
                     <li>
-                      <a href="#account" className="text-gray-700 hover:text-orange-500 flex items-center">
-                        Account Management
-                        <ChevronRight className="ml-auto h-4 w-4" />
-                      </a>
-                    </li>
-                    <li>
                       <a href="#troubleshooting" className="text-gray-700 hover:text-orange-500 flex items-center">
                         Troubleshooting
-                        <ChevronRight className="ml-auto h-4 w-4" />
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#advanced" className="text-gray-700 hover:text-orange-500 flex items-center">
-                        Advanced Features
                         <ChevronRight className="ml-auto h-4 w-4" />
                       </a>
                     </li>
@@ -149,22 +131,22 @@ export default function HelpCenterPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <HelpCard 
                     title="Speed Control"
-                    description="Mastering speed control for different speaking styles."
+                    description="Adjust reading speed in real-time with precision controls (0.1x - 10.0x)."
                     link="#"
                   />
                   <HelpCard 
                     title="Keyboard Shortcuts"
-                    description="Full list of keyboard shortcuts for efficient usage."
+                    description="Space = Play/Pause, Arrow Up/Down = Speed, Arrow Left/Right = Line Navigation, Esc = Exit."
                     link="#"
                   />
                   <HelpCard 
-                    title="Formatting Options"
-                    description="Learn about all text formatting options available."
+                    title="Text Formatting"
+                    description="Font styles (Normal/Bold, Sans/Serif), text alignment, and mirror options."
                     link="#"
                   />
                   <HelpCard 
-                    title="Remote Control Features"
-                    description="How to control your teleprompter from another device."
+                    title="Import/Export"
+                    description="Import from various formats, export settings, and save as Markdown."
                     link="#"
                   />
                 </div>
@@ -176,59 +158,27 @@ export default function HelpCenterPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <HelpCard 
                     title="Performance Issues"
-                    description="Solutions for lag, stuttering, or slow performance."
+                    description="Solutions for lag or stuttering: refresh page, use modern browser, close other apps."
                     link="#"
                   />
                   <HelpCard 
                     title="Text Display Problems"
-                    description="Fixing issues with text display or formatting."
-                    link="#"
-                  />
-                  <HelpCard 
-                    title="Connection Problems"
-                    description="Troubleshooting remote control connection issues."
+                    description="Fixing issues with text formatting, font sizes, or line tracking."
                     link="#"
                   />
                   <HelpCard 
                     title="Browser Compatibility"
-                    description="Browser-specific issues and recommended settings."
+                    description="Recommended browsers: Chrome, Firefox, Safari (latest versions)."
+                    link="#"
+                  />
+                  <HelpCard 
+                    title="Common Issues"
+                    description="Solutions to frequently reported problems and error messages."
                     link="#"
                   />
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Video Tutorials */}
-      <section id="tutorials" className="py-12 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold mb-12 text-center">Video Tutorials</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <VideoTutorial 
-              title="Getting Started with Teleprompter.today"
-              duration="5:32"
-              thumbnail="/placeholder.jpg"
-              link="#"
-            />
-            <VideoTutorial 
-              title="Advanced Speed Control Techniques"
-              duration="8:17"
-              thumbnail="/placeholder.jpg"
-              link="#"
-            />
-            <VideoTutorial 
-              title="Setting Up Remote Control"
-              duration="6:45"
-              thumbnail="/placeholder.jpg"
-              link="#"
-            />
-          </div>
-          <div className="text-center mt-8">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-              View All Tutorials
-            </Button>
           </div>
         </div>
       </section>
@@ -284,32 +234,6 @@ function HelpCard({ title, description, link }: { title: string; description: st
       <div className="flex items-center text-orange-500 font-medium">
         Read More
         <ExternalLink className="ml-1 h-4 w-4" />
-      </div>
-    </a>
-  );
-}
-
-function VideoTutorial({ title, duration, thumbnail, link }: { 
-  title: string; 
-  duration: string; 
-  thumbnail: string; 
-  link: string;
-}) {
-  return (
-    <a href={link} className="block bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
-      <div className="relative">
-        <img src={thumbnail} alt={title} className="w-full h-48 object-cover" />
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
-          {duration}
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-16 h-16 bg-orange-500 bg-opacity-80 rounded-full flex items-center justify-center">
-            <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
-          </div>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-bold">{title}</h3>
       </div>
     </a>
   );

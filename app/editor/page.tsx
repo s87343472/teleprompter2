@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash } from "lucide-react"
 import Logo from "@/components/Logo"
 
-// 创建一个内部组件来处理搜索参数
-function EditorContent() {
+export default function EditorPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -778,19 +777,6 @@ function EditorContent() {
         </div>
       </div>
     </div>
-  )
-}
-
-// 主页面组件
-export default function EditorPage() {
-  return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-screen bg-gray-200">
-        <div className="text-xl font-mono text-gray-600">Loading editor...</div>
-      </div>
-    }>
-      <EditorContent />
-    </Suspense>
   )
 }
 

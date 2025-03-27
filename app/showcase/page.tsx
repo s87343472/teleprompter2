@@ -15,7 +15,7 @@ export default function ShowcasePage() {
             See how others are using our teleprompter
           </p>
           <Link href="/">
-            <Button variant="outline" className="text-white border-white hover:bg-gray-800">
+            <Button variant="outline" className="text-gray-100 border-gray-100 hover:bg-gray-800 hover:text-orange-500">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
             </Button>
           </Link>
