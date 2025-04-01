@@ -1,5 +1,7 @@
+/** @jsxImportSource react */
 "use client"
 
+import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Mic, Monitor, Play, Settings, Smartphone, ChevronRight } from "lucide-react"
@@ -31,6 +33,9 @@ export default function Home() {
             <Link href="/updates" className="text-sm hover:text-orange-500">
               Updates
             </Link>
+            <a href="https://blog.teleprompter.today/" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-orange-500">
+              Blog
+            </a>
             <Link href="/editor">
               <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono">START NOW</Button>
             </Link>
@@ -241,6 +246,11 @@ export default function Home() {
                     <Link href="/updates" className="hover:text-white">
                       Updates
                     </Link>
+                  </li>
+                  <li>
+                    <a href="https://blog.teleprompter.today/" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+                      Blog
+                    </a>
                   </li>
                 </ul>
               </div>

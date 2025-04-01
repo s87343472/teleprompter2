@@ -95,10 +95,24 @@ export default function UpdatesPage() {
             {/* Update Items */}
             <div className="space-y-16 relative">
               <UpdateItem 
+                version="1.0.4" 
+                date="April 1, 2024" 
+                title="Blog Launch & Navigation Updates"
+                badges={[{ text: "Latest", color: "green" }, { text: "Feature", color: "purple" }]}
+                description="Launched official blog and improved site navigation"
+                features={[
+                  "Added official blog at blog.teleprompter.today",
+                  "Enhanced navigation with blog link in header and footer",
+                  "Updated sitemap and robots.txt for better SEO",
+                  "Improved accessibility for all navigation elements"
+                ]}
+              />
+
+              <UpdateItem 
                 version="1.0.3" 
                 date="March 27, 2024" 
                 title="UI Enhancement & Analytics Integration"
-                badges={[{ text: "Latest", color: "green" }]}
+                badges={[{ text: "Feature", color: "purple" }]}
                 description="Improved button interactions and added analytics support"
                 features={[
                   "Enhanced button hover states with orange text highlight for better visibility",

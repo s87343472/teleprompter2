@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Allow: https://blog.teleprompter.today/
 
 # Sitemap
 Sitemap: https://teleprompter.today/sitemap.xml 
+Sitemap: https://blog.teleprompter.today/sitemap.xml 

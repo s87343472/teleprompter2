@@ -32,10 +32,18 @@ export const metadata: Metadata = {
     description: "Professional online teleprompter for creators, speakers, and professionals. Free, easy-to-use, and feature-rich.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Teleprompter.today - Professional Online Teleprompter"
+        alt: "Teleprompter.today - Professional Online Teleprompter",
+        type: "image/svg+xml"
+      },
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Teleprompter.today - Professional Online Teleprompter",
+        type: "image/png"
       }
     ]
   },
@@ -43,7 +51,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Teleprompter.today - Professional Online Teleprompter",
     description: "Professional online teleprompter for creators, speakers, and professionals",
-    images: ["/og-image.jpg"]
+    images: [
+      "/twitter-card.svg",
+      "/twitter-card.png"
+    ]
   },
   icons: {
     icon: [

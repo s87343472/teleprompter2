@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#2A2D34" />
+  
+  <!-- Decorative elements - abstract teleprompter screen -->
+  <rect x="150" y="115" width="900" height="400" rx="20" fill="#1A1C20" stroke="#3498DB" stroke-width="3" />
+  
+  <!-- Text scroll lines to represent teleprompter content -->
+  <rect x="200" y="180" width="800" height="50" rx="5" fill="#3498DB" opacity="0.8" />
+  <rect x="200" y="250" width="750" height="50" rx="5" fill="#3498DB" opacity="0.6" />
+  <rect x="200" y="320" width="800" height="50" rx="5" fill="#3498DB" opacity="0.4" />
+  <rect x="200" y="390" width="700" height="50" rx="5" fill="#3498DB" opacity="0.2" />
+  
+  <!-- Website name -->
+  <text x="600" y="90" font-family="Arial, sans-serif" font-size="60" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Teleprompter.today</text>
+  
+  <!-- Tagline -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="36" text-anchor="middle" fill="#FFFFFF">Smooth, Professional Presentations</text>
+  
+  <!-- Camera lens element -->
+  <circle cx="600" cy="315" r="50" fill="#111111" stroke="#3498DB" stroke-width="3" />
+  <circle cx="600" cy="315" r="35" fill="#0A0A0A" />
+  <circle cx="600" cy="315" r="20" fill="#050505" />
+  <circle cx="600" cy="315" r="10" fill="#000000" />
+  <circle cx="590" cy="305" r="5" fill="#FFFFFF" opacity="0.5" />
+  
+  <!-- Web icon -->
+  <text x="1100" y="60" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#FFFFFF">https://www.teleprompter.today/</text>
+</svg> 
