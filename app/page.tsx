@@ -216,7 +216,10 @@ export default function Home() {
               </Button>
             </Link>
             <a href="mailto:support@teleprompter.today">
-              <Button variant="outline" className="text-white border-white hover:bg-gray-800 px-8 py-3 text-lg">
+              <Button 
+                variant="default"
+                className="bg-white text-black hover:bg-gray-200 hover:text-gray-900 border-0 px-8 py-3 text-lg"
+              >
                 Contact Us
               </Button>
             </a>

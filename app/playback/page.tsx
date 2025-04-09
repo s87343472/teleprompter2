@@ -6,15 +6,14 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, Minus, Pause, Play, Plus, RotateCcw, Volume2, VolumeX, Expand } from "lucide-react"
 import Logo from "@/components/Logo"
 import Link from "next/link"
+import { getScript, getDefaultScriptContent } from "@/lib/scriptStorage"
 
 export default function PlaybackPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Get script content from URL params or use default
-  const encodedScript = searchParams.get("script") || ""
-  const initialSpeed = Number.parseFloat(searchParams.get("speed") || "1.0")
-  const initialFontSize = Number.parseInt(searchParams.get("fontSize") || "36")
+  // 从URL获取脚本ID
+  const scriptId = searchParams.get("id") || ""
 
   // State
   const [scriptContent, setScriptContent] = useState("")
@@ -22,8 +21,8 @@ export default function PlaybackPage() {
   const [currentLine, setCurrentLine] = useState(-1) // -1 for countdown
   const [isPlaying, setIsPlaying] = useState(false)
   const [countdown, setCountdown] = useState(3)
-  const [speed, setSpeed] = useState(initialSpeed)
-  const [fontSize, setFontSize] = useState(initialFontSize)
+  const [speed, setSpeed] = useState(1.0)
+  const [fontSize, setFontSize] = useState(36)
   const [lineHeight, setLineHeight] = useState(1.5)
   const [showControls, setShowControls] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
@@ -37,25 +36,29 @@ export default function PlaybackPage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  // Decode script content on mount
+  // 从localStorage加载脚本内容
   useEffect(() => {
-    if (encodedScript) {
-      try {
-        const decoded = decodeURIComponent(encodedScript)
-        setScriptContent(decoded)
-        setScriptLines(decoded.split("\n"))
-      } catch (e) {
-        console.error("Failed to decode script:", e)
-        setScriptContent("Error loading script content.")
-        setScriptLines(["Error loading script content."])
+    if (scriptId) {
+      const script = getScript(scriptId);
+      if (script) {
+        setScriptContent(script.content);
+        setScriptLines(script.content.split("\n"));
+        
+        // 应用保存的设置
+        if (script.settings) {
+          if (script.settings.speed) setSpeed(script.settings.speed);
+          if (script.settings.fontSize) setFontSize(script.settings.fontSize);
+          if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight);
+        }
+        return;
       }
-    } else {
-      const defaultScript =
-        "Welcome to Teleprompter.today professional system.\n\nThis is your script content, each line will be clearly displayed during playback.\n\nThe system automatically tracks the current reading line and provides highlighting.\n\nYou can easily adjust scrolling speed, font size, and display effects.\n\nStart using it now to create a more professional presentation experience!"
-      setScriptContent(defaultScript)
-      setScriptLines(defaultScript.split("\n"))
     }
-  }, [encodedScript])
+    
+    // 如果没有找到脚本，使用默认内容
+    const defaultScript = getDefaultScriptContent();
+    setScriptContent(defaultScript);
+    setScriptLines(defaultScript.split("\n"));
+  }, [scriptId]);
 
   // Toggle play/pause
   const togglePlay = useCallback(() => {
@@ -176,7 +179,8 @@ export default function PlaybackPage() {
 
   // Exit playback
   const exitPlayback = () => {
-    router.push(`/editor?keepScript=${encodeURIComponent(scriptContent)}`)
+    // 返回编辑器页面，传递脚本ID而不是内容
+    router.push(`/editor?id=${scriptId}`);
   }
 
   // Mouse movement detection for controls

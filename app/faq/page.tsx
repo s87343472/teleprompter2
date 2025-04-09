@@ -122,7 +122,10 @@ export default function FAQPage() {
             </div>
           </div>
           <Link href="/">
-            <Button variant="outline" className="text-white border-white hover:bg-gray-800">
+            <Button 
+              variant="default"
+              className="bg-white text-black hover:bg-orange-500 hover:text-white border-0"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
             </Button>
           </Link>

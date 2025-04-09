@@ -78,7 +78,10 @@ export default function UpdatesPage() {
             Stay up to date with the latest features and improvements
           </p>
           <Link href="/">
-            <Button variant="outline" className="text-gray-100 border-gray-100 hover:bg-gray-800 hover:text-orange-500">
+            <Button 
+              variant="default"
+              className="bg-white text-black hover:bg-orange-500 hover:text-white border-0"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
             </Button>
           </Link>
@@ -95,10 +98,27 @@ export default function UpdatesPage() {
             {/* Update Items */}
             <div className="space-y-16 relative">
               <UpdateItem 
+                version="1.0.5" 
+                date="April 8, 2024" 
+                title="Script Storage Improvements & Dependency Optimization"
+                badges={[{ text: "Latest", color: "green" }, { text: "Feature", color: "purple" }, { text: "Bug Fix", color: "red" }]}
+                description="Implemented ID-based script storage system and optimized project dependencies"
+                features={[
+                  "Replaced URL parameters with localStorage for script content storage",
+                  "Generated unique IDs for each script instead of passing full content in URL",
+                  "Added auto-save functionality that saves scripts every 30 seconds",
+                  "Added manual save button for instant script saving",
+                  "Implemented saving of script settings (speed, font size, line height)",
+                  "Removed unused components and dependencies to resolve React 19 compatibility issues",
+                  "Optimized first screen loading speed and performance"
+                ]}
+              />
+
+              <UpdateItem 
                 version="1.0.4" 
                 date="April 1, 2024" 
                 title="Blog Launch & Navigation Updates"
-                badges={[{ text: "Latest", color: "green" }, { text: "Feature", color: "purple" }]}
+                badges={[{ text: "Feature", color: "purple" }]}
                 description="Launched official blog and improved site navigation"
                 features={[
                   "Added official blog at blog.teleprompter.today",

@@ -12,6 +12,44 @@
 - 最新的版本号在最上面
 - 本规则不能被删除。
 
+### v1.0.5 (2024-04-08)
+
+**New Features:**
+- Added ID-based script storage system
+- Implemented auto-save functionality
+- Added manual save button
+- Added script settings preservation
+
+**Improvements:**
+- Replaced URL parameter storage with localStorage
+- Optimized project dependency structure
+- Enhanced interaction between editor and playback pages
+
+**Fixes:**
+- Fixed potential issues caused by overly long URLs
+- Resolved dependency conflicts with React 19
+- Removed unused components and dependencies
+
+**Affected Files:**
+- `lib/scriptStorage.ts` (new)
+- `app/editor/page.tsx`
+- `app/playback/page.tsx`
+- `package.json`
+- `app/updates/page.tsx`
+- `README.md`
+
+**Test Results:**
+- Script save and load functionality works properly
+- URL parameters simplified to only pass script ID
+- Dependency conflicts resolved, project launches successfully
+- Script content is restored after page refresh or reopening
+
+**Next Steps:**
+- Implement user account system
+- Add script list management interface
+- Implement cloud synchronization
+- Optimize mobile experience
+
 ### v0.1.1 (2024-03-24)
 
 **新增:**

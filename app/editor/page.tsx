@@ -4,8 +4,9 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash } from "lucide-react"
+import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash, FileText } from "lucide-react"
 import Logo from "@/components/Logo"
+import { saveScript, getScript, getCurrentScript, getDefaultScriptContent } from "@/lib/scriptStorage"
 
 function EditorContent() {
   const router = useRouter()
@@ -30,29 +31,57 @@ function EditorContent() {
     horizontal: false,
     vertical: false
   })
+  const [scriptId, setScriptId] = useState<string | null>(null)
 
   // Refs for elements
   const fullscreenRef = useRef<HTMLDivElement>(null)
 
-  // Check for saved script content in URL
-  const keepScript = searchParams.get("keepScript")
+  // Check for script ID in URL
+  const scriptIdParam = searchParams.get("id")
   
   // Script content
-  const [scriptContent, setScriptContent] = useState(
-    "Welcome to Teleprompter.today professional system.\n\nThis is your script content, each line will be clearly displayed during playback.\n\nThe system automatically tracks the current reading line and provides highlighting.\n\nYou can easily adjust scrolling speed, font size, and display effects.\n\nStart using it now to create a more professional presentation experience!",
-  )
+  const [scriptContent, setScriptContent] = useState(getDefaultScriptContent())
 
-  // Load saved script if available
+  // Load script content on mount
   useEffect(() => {
-    if (keepScript) {
-      try {
-        const decoded = decodeURIComponent(keepScript)
-        setScriptContent(decoded)
-      } catch (e) {
-        console.error("Failed to decode saved script:", e)
+    // 首先检查URL中是否指定了脚本ID
+    if (scriptIdParam) {
+      const script = getScript(scriptIdParam);
+      if (script) {
+        setScriptContent(script.content);
+        setScriptId(script.id);
+        
+        // 如果脚本有保存的设置，应用它们
+        if (script.settings) {
+          if (script.settings.speed) setSpeed(script.settings.speed);
+          if (script.settings.fontSize) setFontSize(script.settings.fontSize);
+          if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight);
+        }
+        return;
       }
     }
-  }, [keepScript])
+    
+    // 如果没有指定ID或ID无效，尝试加载当前脚本
+    const currentScriptId = getCurrentScript();
+    if (currentScriptId) {
+      const script = getScript(currentScriptId);
+      if (script) {
+        setScriptContent(script.content);
+        setScriptId(script.id);
+        
+        // 应用保存的设置
+        if (script.settings) {
+          if (script.settings.speed) setSpeed(script.settings.speed);
+          if (script.settings.fontSize) setFontSize(script.settings.fontSize);
+          if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight);
+        }
+        return;
+      }
+    }
+    
+    // 如果没有当前脚本，使用默认内容
+    setScriptContent(getDefaultScriptContent());
+  }, [scriptIdParam]);
   
   // Calculate script lines
   const scriptLines = scriptContent.split("\n")
@@ -83,9 +112,18 @@ function EditorContent() {
 
   // Start dedicated playback
   const startDedicatedPlayback = () => {
-    // Encode script content for URL
-    const encodedScript = encodeURIComponent(scriptContent)
-    router.push(`/playback?script=${encodedScript}&speed=${speed}&fontSize=${fontSize}`)
+    // 保存当前脚本和设置
+    const settings = {
+      speed,
+      fontSize,
+      lineHeight
+    };
+    
+    // 保存脚本到localStorage
+    const id = saveScript(scriptContent, "未命名脚本", scriptId || undefined, settings);
+    
+    // 跳转到播放页面，只传递ID
+    router.push(`/playback?id=${id}`);
   }
 
   // Toggle fullscreen
@@ -134,6 +172,41 @@ function EditorContent() {
       document.removeEventListener("msfullscreenchange", handleFullscreenChange)
     }
   }, [])
+
+  // 自动保存脚本内容
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (scriptContent.trim() !== '') {
+        const settings = {
+          speed,
+          fontSize,
+          lineHeight
+        };
+        const id = saveScript(scriptContent, "未命名脚本", scriptId || undefined, settings);
+        if (!scriptId) {
+          setScriptId(id);
+        }
+      }
+    }, 30000); // 每30秒自动保存一次
+    
+    return () => clearInterval(autoSaveInterval);
+  }, [scriptContent, scriptId, speed, fontSize, lineHeight]);
+
+  // 手动保存脚本
+  const handleManualSave = () => {
+    if (scriptContent.trim() !== '') {
+      const settings = {
+        speed,
+        fontSize,
+        lineHeight
+      };
+      const id = saveScript(scriptContent, "未命名脚本", scriptId || undefined, settings);
+      setScriptId(id);
+      
+      // 提示用户保存成功
+      alert('脚本已保存！');
+    }
+  };
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -462,6 +535,12 @@ function EditorContent() {
             <div className="w-2 h-2 rounded-full bg-gray-500"></div>
             <div className="bg-black px-3 py-1 text-xs font-mono text-white opacity-50">SYNC</div>
           </div>
+          {scriptId && (
+            <div className="flex items-center space-x-1 ml-4">
+              <FileText className="w-3 h-3" />
+              <div className="bg-gray-400 px-3 py-1 text-xs font-mono">ID: {scriptId.substring(0, 8)}</div>
+            </div>
+          )}
         </div>
         <div className="flex space-x-2">
           <div className="bg-gray-500 px-3 py-1 text-xs font-mono text-white cursor-not-allowed opacity-50">SETTINGS</div>
@@ -734,6 +813,14 @@ function EditorContent() {
                     variant="ghost" 
                     className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
                     onClick={handleSave}
+                  >
+                    <Download className="w-3 h-3 mr-1" />
+                    DOWNLOAD
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="bg-green-600 text-white p-2 text-xs font-mono hover:bg-green-700"
+                    onClick={handleManualSave}
                   >
                     <Save className="w-3 h-3 mr-1" />
                     SAVE

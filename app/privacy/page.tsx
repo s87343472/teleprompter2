@@ -15,7 +15,10 @@ export default function PrivacyPolicyPage() {
             Last Updated: March 24, 2024
           </p>
           <Link href="/">
-            <Button variant="outline" className="text-gray-100 border-gray-100 hover:bg-gray-800 hover:text-orange-500">
+            <Button 
+              variant="default"
+              className="bg-white text-black hover:bg-orange-500 hover:text-white border-0"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
             </Button>
           </Link>
@@ -133,12 +136,18 @@ export default function PrivacyPolicyPage() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <Link href="/terms">
-              <Button variant="outline" className="w-full md:w-auto">
+              <Button 
+                variant="default"
+                className="bg-gray-200 text-gray-800 hover:bg-gray-300 border-0 w-full md:w-auto"
+              >
                 Terms of Service
               </Button>
             </Link>
             <Link href="/contact">
-              <Button variant="outline" className="w-full md:w-auto">
+              <Button 
+                variant="default"
+                className="bg-gray-200 text-gray-800 hover:bg-gray-300 border-0 w-full md:w-auto"
+              >
                 Contact Us
               </Button>
             </Link>

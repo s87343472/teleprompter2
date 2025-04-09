@@ -26,7 +26,10 @@ export default function HelpCenterPage() {
           </div>
           <div className="mt-4">
             <Link href="/">
-              <Button variant="outline" className="text-gray-100 border-gray-100 hover:bg-gray-800 hover:text-orange-500">
+              <Button 
+                variant="default"
+                className="bg-white text-black hover:bg-orange-500 hover:text-white border-0"
+              >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
               </Button>
             </Link>
@@ -197,7 +200,10 @@ export default function HelpCenterPage() {
               </Button>
             </Link>
             <Link href="/faq">
-              <Button variant="outline" className="text-white border-white hover:bg-gray-800 px-8 py-3 text-lg">
+              <Button 
+                variant="default"
+                className="bg-white text-black hover:bg-gray-200 hover:text-gray-900 border-0 px-8 py-3 text-lg"
+              >
                 View FAQ
               </Button>
             </Link>
