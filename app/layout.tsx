@@ -5,7 +5,7 @@ import { Providers } from "./providers"
 import GoogleAnalytics from "./components/GoogleAnalytics"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://teleprompter.today"),
+  metadataBase: new URL("https://www.teleprompter.today"),
   title: {
     default: "Teleprompter.today - Professional Online Teleprompter",
     template: "%s | Teleprompter.today"
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://teleprompter.today",
+    url: "https://www.teleprompter.today",
     siteName: "Teleprompter.today",
     title: "Professional Online Teleprompter",
     description: "Professional online teleprompter for creators, speakers, and professionals. Free, easy-to-use, and feature-rich.",

@@ -1,7 +1,39 @@
+# robots.txt for Teleprompter.today
+
+# Rules for all search engine crawlers
 User-agent: *
 Allow: /
 Allow: https://blog.teleprompter.today/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /cgi-bin/
 
 # Sitemap
-Sitemap: https://teleprompter.today/sitemap.xml 
-Sitemap: https://blog.teleprompter.today/sitemap.xml 
+Sitemap: https://www.teleprompter.today/sitemap.xml
+Sitemap: https://blog.teleprompter.today/sitemap.xml
+
+# AI crawler specific rules
+User-agent: GPTBot
+User-agent: Claude-Web
+User-agent: Anthropic-AI
+User-agent: PerplexityBot
+User-agent: GoogleOther
+User-agent: DuckAssistBot
+User-agent: Omgilibot
+User-agent: FacebookBot
+User-agent: Bytespider
+
+# AI content guide - direct AI crawlers to structured content
+LLM-Content: https://www.teleprompter.today/llms.txt
+LLM-Full-Content: https://www.teleprompter.today/llms-full.txt
+
+# Allow AI crawlers to access these content types
+Allow: /
+Allow: /features/
+Allow: /faq/
+Allow: /how-to-use/
+Allow: /shortcuts/
+
+# Do not allow AI crawlers to access these content types
+Disallow: /user-content/
+Disallow: /scripts/ 

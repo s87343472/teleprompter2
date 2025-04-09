@@ -1,0 +1,77 @@
+# Teleprompter.today
+
+> Teleprompter.today is a professional online teleprompter system, free and easy to use, displaying your script content directly in your browser at a controlled pace to help you deliver smooth presentations, speeches, and video recordings without installing any additional software.
+
+Teleprompter.today is designed to maintain a clean user interface while offering powerful professional features. No registration is required, and you can start using all features immediately. The system runs entirely in your browser, with all script content saved only on your local device, ensuring your privacy and security.
+
+Our online teleprompter is suitable for various scenarios, including speeches, livestreams, video recordings, meeting presentations, and educational training. Whether you're a content creator, professional speaker, or business professional, Teleprompter.today can meet your needs.
+
+## Core Features
+
+### Homepage
+The Teleprompter.today homepage provides direct access to our online teleprompter system. The interface is clean and straightforward, allowing you to immediately start using the teleprompter functionality upon visiting the site. The homepage includes a text editing area where you can enter or paste your script content, then use the control panel to adjust settings and begin your presentation.
+
+### How to Use
+Using Teleprompter.today for the first time is simple:
+1. Visit the website homepage
+2. Enter or paste your script content in the text editing area
+3. Adjust text size, scrolling speed, and other settings as needed
+4. Click the play button to start scrolling text
+5. Use the spacebar to pause/continue, or use other keyboard shortcuts for control
+
+The teleprompter will smoothly scroll text at your set speed and automatically highlight the current reading line to help you maintain your reading rhythm.
+
+### Keyboard Shortcuts
+Teleprompter.today offers various keyboard shortcuts for quick control during use:
+- Space = Play/Pause
+- Up/Down Arrows = Adjust Speed
+- Left/Right Arrows = Previous/Next Line
+- Esc = Exit Playback
+- H = Hide Controls
+
+These shortcuts are designed sensibly, allowing you to naturally control the teleprompter without interrupting your speech.
+
+### FAQ
+We've collected the most common questions and answers from users, covering system usage, feature details, technical support, and more. For example:
+- Do I need to create an account to use it? (No)
+- Which browsers does the teleprompter support? (All modern browsers)
+- Where is my script content saved? (Local storage only, not uploaded to servers)
+- How do I adjust text scrolling speed? (Through the control panel or keyboard shortcuts)
+
+## Special Features
+
+### Mirror Display
+Teleprompter.today supports horizontal mirror flipping, designed specifically for use with professional teleprompter equipment. When using teleprompter devices with semi-transparent reflective glass, the text needs to be flipped horizontally to be read correctly on the reflection surface. Simply click the mirror button, and the text will flip immediately.
+
+### Auto-tracking
+The teleprompter has intelligent auto-tracking functionality, always highlighting the current reading line, allowing you to easily locate your position during reading without losing context. This feature is particularly suitable for reading long scripts, effectively preventing line skipping or reading errors.
+
+### Speed Control
+You can precisely control text scrolling speed, adjusting according to your reading habits and speech rhythm. The system supports real-time speed adjustment through buttons on the control panel or keyboard up/down arrows, ensuring text scrolling perfectly synchronizes with your speech.
+
+### Font Settings
+Teleprompter.today allows you to customize text display effects, including:
+- Font Size: Adjust based on your distance from the screen and personal vision
+- Text Color: Supports multiple color choices, adapting to different usage environments
+- Background Color: Choose dark or light backgrounds to reduce eye strain
+- Line Spacing: Adjust text density to improve readability
+
+## Optional
+
+### Use Cases
+Teleprompter.today is suitable for various scenarios:
+- Video Creators: Use the teleprompter when recording video content to maintain natural eye contact
+- Speakers: Reference speech notes during public speeches or presentations
+- Online Meetings: Display scripts when reporting in video conferences
+- Educators: For recording online courses and educational videos
+- Hosts: Reference scripts during livestreams and event hosting
+
+### Updates
+We continuously improve Teleprompter.today, regularly adding new features and optimizing user experience. Recent updates include:
+- Enhanced text scrolling smoothness
+- Improved keyboard shortcut controls
+- Optimized mobile device support
+- Improved user interface design
+
+### Feedback
+We value user opinions and suggestions and welcome you to share your experience, feature suggestions, or issues encountered through our feedback page. Your feedback is an important basis for our continuous improvement. 

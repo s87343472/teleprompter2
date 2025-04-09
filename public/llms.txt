@@ -1,0 +1,22 @@
+# Teleprompter.today
+
+> Teleprompter.today is a professional online teleprompter system, free and easy to use, displaying your script content directly in your browser at a controlled pace to help you deliver smooth presentations, speeches, and video recordings without installing any additional software.
+
+Teleprompter.today is designed to maintain a clean user interface while offering powerful professional features. No registration is required, and you can start using all features immediately. The system runs entirely in your browser, with all script content saved only on your local device, ensuring your privacy and security.
+
+## Core Features
+- [Homepage](https://www.teleprompter.today/): Direct access to our online teleprompter system
+- [How to Use](https://www.teleprompter.today/how-to-use): Quick start guide and detailed instructions
+- [Keyboard Shortcuts](https://www.teleprompter.today/shortcuts): Complete list of control shortcuts
+- [FAQ](https://www.teleprompter.today/faq): Common questions and answers
+
+## Special Features
+- [Mirror Display](https://www.teleprompter.today/features/mirror): Supports horizontal mirroring for professional teleprompter equipment
+- [Auto-tracking](https://www.teleprompter.today/features/tracking): Current reading line automatically highlighted
+- [Speed Control](https://www.teleprompter.today/features/speed): Precise control of text scrolling speed
+- [Font Settings](https://www.teleprompter.today/features/font): Customize font size, color, and style
+
+## Optional
+- [Use Cases](https://www.teleprompter.today/use-cases): Application examples in different scenarios
+- [Updates](https://www.teleprompter.today/updates): Latest features and improvements
+- [Feedback](https://www.teleprompter.today/feedback): Submit your suggestions and issues 
