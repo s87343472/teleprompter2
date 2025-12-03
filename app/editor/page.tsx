@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash, FileText } from "lucide-react"
+import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash, FileText, Settings } from "lucide-react"
 import Logo from "@/components/Logo"
 import { saveScript, getScript, getCurrentScript, getDefaultScriptContent } from "@/lib/scriptStorage"
 
@@ -326,30 +326,70 @@ function EditorContent() {
   // Render the teleprompter display
   const renderTeleprompter = () => {
     return (
-      <div className="flex-1 bg-black text-white flex flex-col" ref={fullscreenRef}>
-        {/* Status bar */}
-        <div className="bg-gray-900 px-4 py-2 flex justify-between items-center text-xs font-mono">
-          <div className="flex items-center space-x-3">
-            <div className="w-2 h-2 rounded-full bg-gray-500"></div>
-            <span>PREVIEW</span>
-          </div>
-          <div className="flex space-x-4">
-            <span>SPEED: {speed.toFixed(1)}x</span>
-            <span>SIZE: {fontSize}px</span>
-            <span>LINES: {scriptLines.length}</span>
+      <div className="flex-[0_0_70%] bg-black text-white flex flex-col" ref={fullscreenRef}>
+        {/* Preview header - Minimal */}
+        <div className="bg-gray-900 px-4 py-2 flex justify-between items-center text-xs">
+          <span className="text-gray-400">Preview</span>
+          <div className="flex items-center gap-3 text-gray-400">
+            <span>{scriptLines.length} lines</span>
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5 text-gray-400 hover:text-white"
+              className="h-6 w-6 hover:text-white"
               onClick={toggleFullscreen}
             >
-              <Expand className="h-4 w-4" />
+              <Expand className="h-3 w-3" />
             </Button>
           </div>
         </div>
 
         {/* Text display area with improved alignment */}
         <div className="flex-1 overflow-hidden relative">
+          {/* Floating speed control - top right */}
+          {!isFullscreen && (
+            <div className="absolute top-4 right-4 z-20">
+              {/* Speed control */}
+              <div className="bg-black/80 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-3 border border-gray-700 mb-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-white hover:text-orange-500 hover:bg-gray-800"
+                  onClick={() => adjustSpeed(-0.1)}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="text-white font-mono text-sm min-w-[50px] text-center">{speed.toFixed(1)}×</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-white hover:text-orange-500 hover:bg-gray-800"
+                  onClick={() => adjustSpeed(0.1)}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Keyboard shortcuts hint */}
+              <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-300 border border-gray-700/50">
+                <div className="font-medium mb-1 text-gray-200">Shortcuts</div>
+                <div className="space-y-0.5">
+                  <div className="flex justify-between gap-3">
+                    <span className="text-gray-400">Space</span>
+                    <span>Play/Pause</span>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <span className="text-gray-400">↑/↓</span>
+                    <span>Speed</span>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <span className="text-gray-400">F11</span>
+                    <span>Fullscreen</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="absolute inset-0 flex">
             {/* Left side line numbers and tracking indicator */}
             <div className="w-10 bg-gray-900 flex flex-col">
@@ -517,47 +557,34 @@ function EditorContent() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-200">
-      {/* Top control bar */}
-      <div className="w-full bg-gray-300 flex items-center justify-between px-4 py-2 border-b border-gray-400">
-        <div className="flex space-x-2 items-center">
-          <Link href="/" className="mr-4">
-            <Logo variant="default" size={24} withText={false} />
+      {/* Top control bar - Simplified */}
+      <div className="w-full bg-white flex items-center justify-between px-6 py-3 border-b border-gray-200">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Logo variant="default" size={28} withText={false} />
           </Link>
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <div className="bg-white px-3 py-1 text-xs font-mono opacity-50">OUTPUT</div>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-            <div className="bg-orange-500 px-3 py-1 text-xs font-mono text-white">INPUT</div>
-          </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 rounded-full bg-gray-500"></div>
-            <div className="bg-black px-3 py-1 text-xs font-mono text-white opacity-50">SYNC</div>
-          </div>
           {scriptId && (
-            <div className="flex items-center space-x-1 ml-4">
+            <div className="flex items-center gap-2 text-xs text-gray-500">
               <FileText className="w-3 h-3" />
-              <div className="bg-gray-400 px-3 py-1 text-xs font-mono">ID: {scriptId.substring(0, 8)}</div>
+              <span>ID: {scriptId.substring(0, 8)}</span>
             </div>
           )}
         </div>
-        <div className="flex space-x-2">
-          <div className="bg-gray-500 px-3 py-1 text-xs font-mono text-white cursor-not-allowed opacity-50">SETTINGS</div>
-          <Link href="/">
-            <div className="bg-gray-800 px-3 py-1 text-xs font-mono text-white cursor-pointer">EXIT</div>
-          </Link>
-        </div>
+        <Link href="/">
+          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+            Exit
+          </Button>
+        </Link>
       </div>
 
-      {/* Main content area */}
+      {/* Main content area - 30/70 split */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left side editor panel */}
-        <div className="flex-1 overflow-hidden bg-white flex flex-col min-w-0">
+        {/* Left side editor panel - 30% */}
+        <div className="w-[30%] overflow-hidden bg-white flex flex-col border-r border-gray-200">
           {/* Script editor header */}
-          <div className="bg-gray-200 px-4 py-2 flex justify-between items-center text-xs font-mono">
-            <div>SCRIPT EDITOR</div>
-            <div>LINES: {scriptLines.length} | EST. TIME: {Math.round(scriptLines.length * 2.5)}s</div>
+          <div className="bg-gray-50 px-4 py-2 flex justify-between items-center text-xs border-b border-gray-200">
+            <div className="font-medium text-gray-700">Script Editor</div>
+            <div className="text-gray-500">{scriptLines.length} lines · ~{Math.round(scriptLines.length * 2.5)}s</div>
           </div>
 
           {/* Text area */}
@@ -569,298 +596,336 @@ function EditorContent() {
             style={{ fontSize: "16px", lineHeight: "1.6" }}
           />
 
-          {/* Format bar - 移除重复按钮 */}
-          <div className="bg-gray-200 px-4 py-2 flex justify-between items-center">
-            <div className="font-mono text-xs">FORMAT</div>
-          </div>
         </div>
 
         {/* Right side teleprompter preview panel */}
         {renderTeleprompter()}
       </div>
 
-      {/* Bottom control panel */}
-      <div className="bg-gray-300 border-t border-gray-400">
-        {/* Control tabs */}
-        <div className="flex border-b border-gray-400">
-          {["EDIT", "CONTROLS", "FONT"].map((tab) => (
-            <div
-              key={tab}
-              className={`px-4 py-2 font-mono text-sm cursor-pointer ${activeTab === tab ? "bg-black text-white" : "bg-gray-300 text-gray-700"}`}
-              onClick={() => setActiveTab(tab)}
+      {/* Bottom control panel - Simplified single row */}
+      <div className="bg-gray-200 border-t border-gray-300">
+        {/* Main controls - always visible */}
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between gap-8 max-w-6xl mx-auto">
+            {/* Left: Primary controls */}
+            <div className="flex items-center gap-6">
+              {/* Font Size */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono text-gray-600">FONT</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 bg-white hover:bg-gray-100"
+                  onClick={() => adjustFontSize(-2)}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="font-mono text-sm min-w-[45px] text-center">{fontSize}px</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 bg-white hover:bg-gray-100"
+                  onClick={() => adjustFontSize(2)}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+
+              {/* Separator */}
+              <div className="h-6 w-px bg-gray-300"></div>
+
+              {/* Import/Export */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 bg-white hover:bg-gray-100 text-xs"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-3 w-3 mr-1" />
+                  Import
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 bg-white hover:bg-gray-100 text-xs"
+                  onClick={handleSave}
+                >
+                  <Download className="h-3 w-3 mr-1" />
+                  Export
+                </Button>
+              </div>
+            </div>
+
+            {/* Center: Main action button */}
+            <Button
+              className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white font-mono"
+              onClick={startDedicatedPlayback}
             >
-              {tab}
-            </div>
-          ))}
-        </div>
+              <Play className="h-4 w-4 mr-2" />
+              START PLAYBACK
+            </Button>
 
-        {/* Control panel content - different controls based on active tab */}
-        <div className="p-4">
-          {activeTab === "CONTROLS" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Speed control */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">SPEED</div>
-                <div className="flex justify-between items-center">
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                    onClick={() => adjustSpeed(-0.1)}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <div className="font-mono text-xl">{speed.toFixed(1)}</div>
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                    onClick={() => adjustSpeed(0.1)}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="text-xs text-gray-600 mt-1 text-center">Range: 0.1x - 10.0x</div>
-                <div className="flex justify-center mt-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                </div>
+            {/* Right: Secondary controls */}
+            <div className="flex items-center gap-6">
+              {/* Quick actions */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 bg-white hover:bg-gray-100 text-xs"
+                  onClick={toggleFullscreen}
+                >
+                  <Expand className="h-3 w-3 mr-1" />
+                  Preview
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 bg-green-600 hover:bg-green-700 text-white text-xs"
+                  onClick={handleManualSave}
+                >
+                  <Save className="h-3 w-3 mr-1" />
+                  Save
+                </Button>
               </div>
 
-              {/* Combined Navigation & Display control */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">PLAYBACK</div>
-                <div className="flex flex-col space-y-4">
-                  <Button
-                    variant="ghost"
-                    className="bg-orange-500 text-white p-2 text-xs font-mono hover:bg-orange-600 flex items-center justify-center"
-                    onClick={startDedicatedPlayback}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    START PLAYBACK
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="bg-black text-white p-2 text-xs font-mono hover:bg-gray-800 flex items-center justify-center"
-                    onClick={toggleFullscreen}
-                  >
-                    <Expand className="w-4 h-4 mr-2" />
-                    FULLSCREEN
-                  </Button>
-                  <div className="flex justify-center mt-2 space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                  </div>
-                </div>
-              </div>
+              {/* Separator */}
+              <div className="h-6 w-px bg-gray-300"></div>
 
-              {/* Line indicator control */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">CURRENT LINE</div>
-                <div className="flex justify-between items-center">
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                    onClick={() => setCurrentLine(Math.max(currentLine - 1, 0))}
-                  >
-                    <ChevronUp className="w-4 h-4" />
-                  </Button>
-                  <div className="font-mono text-xl">{currentLine + 1}</div>
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                    onClick={() => setCurrentLine(Math.min(currentLine + 1, scriptLines.length - 1))}
-                  >
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="flex justify-center mt-2">
-                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "FONT" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Font size control */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">FONT SIZE</div>
-                <div className="flex justify-between items-center">
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                    onClick={() => adjustFontSize(-2)}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <div className="font-mono text-xl">{fontSize}px</div>
-                  <Button
-                    variant="ghost"
-                    className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                    onClick={() => adjustFontSize(2)}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="text-xs text-gray-600 mt-1 text-center">Range: 20px - 64px</div>
-                <div className="flex justify-center mt-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                </div>
-              </div>
-
-              {/* Font style control */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">FONT STYLE</div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="ghost" 
-                    className={`${
-                      fontStyle.weight === 'normal' ? 'bg-gray-900' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
-                    onClick={() => handleFontStyleChange('normal')}
-                  >
-                    NORMAL
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className={`${
-                      fontStyle.weight === 'bold' ? 'bg-gray-900' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
-                    onClick={() => handleFontStyleChange('bold')}
-                  >
-                    BOLD
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className={`${
-                      fontStyle.family === 'sans' ? 'bg-gray-900' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
-                    onClick={() => handleFontStyleChange('sans')}
-                  >
-                    SANS
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className={`${
-                      fontStyle.family === 'serif' ? 'bg-gray-900' : 'bg-gray-700'
-                    } text-white p-2 text-xs font-mono hover:text-orange-500`}
-                    onClick={() => handleFontStyleChange('serif')}
-                  >
-                    SERIF
-                  </Button>
-                </div>
-                <div className="flex justify-center mt-4">
-                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "EDIT" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Text tools */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">TEXT TOOLS</div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-900 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={handleUpperCase}
-                  >
-                    UPPERCASE
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={handleLowerCase}
-                  >
-                    LOWERCASE
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={handleClear}
-                  >
-                    CLEAR ALL
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={handleAddMarker}
-                  >
-                    ADD MARKER
-                  </Button>
-                </div>
-              </div>
-
-              {/* Import/export */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">IMPORT/EXPORT</div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-900 text-white p-2 text-xs font-mono hover:text-orange-500 flex items-center justify-center"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="w-3 h-3 mr-1" />
-                    IMPORT
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={handleExport}
-                  >
-                    EXPORT
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={handleSave}
-                  >
-                    <Download className="w-3 h-3 mr-1" />
-                    DOWNLOAD
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-green-600 text-white p-2 text-xs font-mono hover:bg-green-700"
-                    onClick={handleManualSave}
-                  >
-                    <Save className="w-3 h-3 mr-1" />
-                    SAVE
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="bg-gray-700 text-white p-2 text-xs font-mono hover:text-orange-500"
-                    onClick={() => alert('Templates feature coming soon!')}
-                  >
-                    TEMPLATES
-                  </Button>
-                </div>
-              </div>
-
-              {/* Estimated time */}
-              <div className="bg-gray-200 p-4 rounded shadow">
-                <div className="text-center font-mono text-sm mb-2">ESTIMATED TIME</div>
-                <div className="p-2">
-                  <div className="bg-black text-white p-3 font-mono text-xl text-center">
-                    {Math.ceil((scriptLines.length * 2) / speed)}s
-                  </div>
-                  <div className="text-center mt-2 text-xs text-gray-600">At {speed.toFixed(1)}x speed</div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Bottom status bar */}
-      <div className="bg-gray-400 py-2 px-4 border-t border-gray-500">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4 text-xs font-mono">
-            <div>V 1.0.3</div>
-            <div className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
-              CONNECTED
+              {/* Advanced settings toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`h-8 text-xs ${activeTab !== 'EDIT' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white hover:bg-gray-100'}`}
+                onClick={() => setActiveTab(activeTab === 'EDIT' ? 'ADVANCED' : 'EDIT')}
+              >
+                <Settings className="h-3 w-3 mr-1" />
+                Advanced
+              </Button>
             </div>
           </div>
-          <div className="text-xs font-mono">{new Date().toLocaleDateString()}</div>
+        </div>
+
+        {/* Advanced panel - collapsible */}
+        {activeTab === "ADVANCED" && (
+          <div className="px-6 pb-4 border-t border-gray-300 bg-gray-100">
+            <div className="py-4 max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Line Height */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">LINE HEIGHT</div>
+                  <div className="flex items-center justify-between">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => adjustLineHeight(-0.1)}
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="font-mono text-sm">{lineHeight.toFixed(1)}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => adjustLineHeight(0.1)}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Font Style */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">FONT STYLE</div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button
+                      variant={fontStyle.weight === 'normal' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => handleFontStyleChange('normal')}
+                    >
+                      Normal
+                    </Button>
+                    <Button
+                      variant={fontStyle.weight === 'bold' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => handleFontStyleChange('bold')}
+                    >
+                      Bold
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Font Family */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">FONT FAMILY</div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button
+                      variant={fontStyle.family === 'sans' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => handleFontStyleChange('sans')}
+                    >
+                      Sans
+                    </Button>
+                    <Button
+                      variant={fontStyle.family === 'serif' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => handleFontStyleChange('serif')}
+                    >
+                      Serif
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Text Alignment */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">ALIGNMENT</div>
+                  <div className="grid grid-cols-3 gap-1">
+                    <Button
+                      variant={textAlign === 'left' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 w-full p-0"
+                      onClick={() => handleTextAlign('left')}
+                    >
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="15" y2="12" />
+                        <line x1="3" y1="18" x2="18" y2="18" />
+                      </svg>
+                    </Button>
+                    <Button
+                      variant={textAlign === 'center' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 w-full p-0"
+                      onClick={() => handleTextAlign('center')}
+                    >
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="6" y1="12" x2="18" y2="12" />
+                        <line x1="4" y1="18" x2="20" y2="18" />
+                      </svg>
+                    </Button>
+                    <Button
+                      variant={textAlign === 'right' ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 w-full p-0"
+                      onClick={() => handleTextAlign('right')}
+                    >
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="9" y1="12" x2="21" y2="12" />
+                        <line x1="6" y1="18" x2="21" y2="18" />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Text Tools */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">TEXT TOOLS</div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={handleUpperCase}
+                    >
+                      UPPER
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={handleLowerCase}
+                    >
+                      lower
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Mirror Controls */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">MIRROR</div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button
+                      variant={mirror.horizontal ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => handleMirror('horizontal')}
+                    >
+                      H-Flip
+                    </Button>
+                    <Button
+                      variant={mirror.vertical ? 'default' : 'outline'}
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => handleMirror('vertical')}
+                    >
+                      V-Flip
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Utilities */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">UTILITIES</div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={handleAddMarker}
+                    >
+                      Marker
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs text-red-600 hover:text-red-700"
+                      onClick={handleClear}
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Export JSON */}
+                <div className="bg-white p-3 rounded-lg">
+                  <div className="text-xs font-mono text-gray-600 mb-2">ADVANCED</div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs w-full"
+                    onClick={handleExport}
+                  >
+                    Export JSON
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".txt,.md,.doc,.docx"
+        className="hidden"
+        onChange={handleImport}
+      />
+
+      {/* Bottom status bar - simplified */}
+      <div className="bg-gray-50 py-1.5 px-4 border-t border-gray-200">
+        <div className="flex justify-between items-center text-xs text-gray-400">
+          <div>v1.0.5</div>
+          <div>{new Date().toLocaleDateString()}</div>
         </div>
       </div>
     </div>
@@ -874,4 +939,3 @@ export default function EditorPage() {
     </Suspense>
   )
 }
-
