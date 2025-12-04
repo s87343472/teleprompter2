@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, ChevronUp, Minus, Play, Plus, SkipBack, SkipForward, X } from "lucide-react"
+import { ChevronDown, ChevronUp, Minus, Play, Plus, SkipBack, X } from "lucide-react"
 
 interface ControlPanelProps {
   activeTab: string

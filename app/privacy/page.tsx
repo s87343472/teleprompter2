@@ -103,7 +103,7 @@ export default function PrivacyPolicyPage() {
                 We use cookies and similar tracking technologies to collect information about your activity on our site. You can control cookies through your browser settings, but disabling cookies may limit your ability to use some features of our service.
               </p>
 
-              <h2>Children's Privacy</h2>
+              <h2>Children&apos;s Privacy</h2>
               <p>
                 Our services are not intended for individuals under the age of 16. We do not knowingly collect personal information from children under 16. If we discover that a child under 16 has provided us with personal information, we will promptly delete it.
               </p>
@@ -115,7 +115,7 @@ export default function PrivacyPolicyPage() {
 
               <h2>Changes to This Privacy Policy</h2>
               <p>
-                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. We encourage you to review this Privacy Policy periodically.
+                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. We encourage you to review this Privacy Policy periodically.
               </p>
 
               <h2>Contact Us</h2>

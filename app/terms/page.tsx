@@ -32,7 +32,7 @@ export default function TermsPage() {
             <div className="prose prose-lg max-w-none">
               <h2>1. Agreement to Terms</h2>
               <p>
-                By accessing or using Teleprompter.today (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of the terms, you may not access the Service.
+                By accessing or using Teleprompter.today (the &quot;Service&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you disagree with any part of the terms, you may not access the Service.
               </p>
 
               <h2>2. Description of Service</h2>
@@ -50,7 +50,7 @@ export default function TermsPage() {
 
               <h2>4. User Content</h2>
               <p>
-                The Service allows you to create, upload, store, and share content, including text, scripts, and other materials ("User Content"). You retain all rights in, and are solely responsible for, your User Content.
+                The Service allows you to create, upload, store, and share content, including text, scripts, and other materials (&quot;User Content&quot;). You retain all rights in, and are solely responsible for, your User Content.
               </p>
               <p>
                 By uploading User Content, you grant us a worldwide, non-exclusive, royalty-free license to use, store, and display your User Content for the sole purpose of providing the Service to you.
@@ -60,7 +60,7 @@ export default function TermsPage() {
               </p>
               <ul>
                 <li>You own or have the necessary rights to use and authorize us to use your User Content</li>
-                <li>Your User Content does not violate any third party's intellectual property or other rights</li>
+                <li>Your User Content does not violate any third party&apos;s intellectual property or other rights</li>
                 <li>Your User Content complies with these Terms and applicable law</li>
               </ul>
 
@@ -107,7 +107,7 @@ export default function TermsPage() {
 
               <h2>9. Disclaimer</h2>
               <p>
-                Your use of the Service is at your sole risk. The Service is provided on an "AS IS" and "AS AVAILABLE" basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance.
+                Your use of the Service is at your sole risk. The Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance.
               </p>
 
               <h2>10. Governing Law</h2>
@@ -120,7 +120,7 @@ export default function TermsPage() {
 
               <h2>11. Changes to Terms</h2>
               <p>
-                We reserve the right to modify or replace these Terms at any time. We will provide notice of any changes by posting the new Terms on this page and updating the "Last Updated" date.
+                We reserve the right to modify or replace these Terms at any time. We will provide notice of any changes by posting the new Terms on this page and updating the &quot;Last Updated&quot; date.
               </p>
               <p>
                 By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Service.

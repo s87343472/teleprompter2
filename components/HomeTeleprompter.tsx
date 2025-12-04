@@ -12,15 +12,13 @@ Auto-tracking of current line.
 Adjustable speed and settings.
 Create professional presentations!`
 
-// Create a ref to store the toggle function
-let globalTogglePlayFn: (() => void) | null = null;
 
 export default function HomeTeleprompter() {
   // State
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState(1.0)
   const [currentLine, setCurrentLine] = useState(0)
-  const [scriptLines, setScriptLines] = useState<string[]>(DEMO_TEXT.split('\n'))
+  const scriptLines = DEMO_TEXT.split('\n')
   const [buttonFeedback, setButtonFeedback] = useState({ minus: false, plus: false, play: false })
   const [isHovered, setIsHovered] = useState(false)
   
@@ -47,24 +45,20 @@ export default function HomeTeleprompter() {
     setIsPlaying(!isPlaying)
   }
   
-  // Store the togglePlay function in the global ref
   useEffect(() => {
-    globalTogglePlayFn = togglePlay;
-    
-    // Listen for external play commands
     const handleExternalPlay = () => {
       if (!isPlaying) {
         togglePlay();
       }
     };
-    
+
     window.addEventListener('teleprompter:play', handleExternalPlay);
-    
+
     return () => {
-      globalTogglePlayFn = null;
       window.removeEventListener('teleprompter:play', handleExternalPlay);
     };
-  }, [isPlaying, togglePlay]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying]);
   
   // Adjust speed
   const adjustSpeed = (amount: number) => {

@@ -18,6 +18,7 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
@@ -32,6 +33,7 @@ function genId() {
   return count.toString()
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ActionType = typeof actionTypes
 
 type Action =

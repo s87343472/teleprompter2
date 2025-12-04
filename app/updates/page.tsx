@@ -56,7 +56,7 @@ function UpdateItem({ version, date, title, description, features, badges }: Upd
         <h3 className="text-2xl font-bold mb-2">{title}</h3>
         <p className="text-gray-600 mb-4">{description}</p>
         
-        <h4 className="font-semibold mb-2">What's New:</h4>
+        <h4 className="font-semibold mb-2">What&apos;s New:</h4>
         <ul className="list-disc pl-5 text-gray-600 space-y-1">
           {features.map((feature, index) => (
             <li key={index}>{feature}</li>
@@ -97,11 +97,26 @@ export default function UpdatesPage() {
 
             {/* Update Items */}
             <div className="space-y-16 relative">
-              <UpdateItem 
-                version="1.0.5" 
-                date="April 8, 2024" 
+              <UpdateItem
+                version="1.1.3"
+                date="December 4, 2024"
+                title="Code Quality & Lint Fixes"
+                badges={[{ text: "Latest", color: "green" }, { text: "Maintenance", color: "blue" }]}
+                description="Improved code quality and fixed all linting issues for better maintainability"
+                features={[
+                  "Fixed all ESLint errors across the codebase",
+                  "Resolved unused variable warnings in editor and components",
+                  "Fixed unescaped entity issues in FAQ, Privacy, and Terms pages",
+                  "Improved TypeScript type definitions",
+                  "Optimized component dependencies"
+                ]}
+              />
+
+              <UpdateItem
+                version="1.0.5"
+                date="April 8, 2024"
                 title="Script Storage Improvements & Dependency Optimization"
-                badges={[{ text: "Latest", color: "green" }, { text: "Feature", color: "purple" }, { text: "Bug Fix", color: "red" }]}
+                badges={[{ text: "Feature", color: "purple" }, { text: "Bug Fix", color: "red" }]}
                 description="Implemented ID-based script storage system and optimized project dependencies"
                 features={[
                   "Replaced URL parameters with localStorage for script content storage",

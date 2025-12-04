@@ -1,940 +1,675 @@
 "use client"
 
-import { useState, useEffect, useRef, Suspense } from "react"
-import Link from "next/link"
+import { useState, useEffect, useRef, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Expand, Minus, Play, Plus, Save, SkipBack, SkipForward, Upload, ChevronUp, ChevronDown, Download, Trash, FileText, Settings } from "lucide-react"
+import {
+  Play, Pause, ChevronUp, ChevronDown, RotateCcw,
+  ChevronsUp, ChevronsDown, Settings, Minus, Plus, X
+} from "lucide-react"
 import Logo from "@/components/Logo"
-import { saveScript, getScript, getCurrentScript, getDefaultScriptContent } from "@/lib/scriptStorage"
+import Link from "next/link"
+import { getScript, getDefaultScriptContent } from "@/lib/scriptStorage"
+
+type TextCase = 'default' | 'capitalize' | 'uppercase' | 'lowercase'
+type TextAlign = 'left' | 'center' | 'right'
+type FontFamily = 'sans' | 'serif'
 
 function EditorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const scriptId = searchParams.get("id") || ""
 
-  // Basic state
+  const [originalContent, setOriginalContent] = useState("")
+  const [scriptLines, setScriptLines] = useState<string[]>([])
+  const [currentLine, setCurrentLine] = useState(-1)
+  const [countdown, setCountdown] = useState(3)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [speed, setSpeed] = useState(1.0)
+  const [showSettings, setShowSettings] = useState(true)
+  const [showEnd, setShowEnd] = useState(false)
+
   const [fontSize, setFontSize] = useState(36)
   const [lineHeight, setLineHeight] = useState(1.5)
-  const [currentLine, setCurrentLine] = useState(0)
-  const [activeTab, setActiveTab] = useState("EDIT")
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [content, setContent] = useState('')
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [fontStyle, setFontStyle] = useState({
-    weight: 'normal',  // 'normal' 或 'bold'
-    family: 'sans'     // 'sans' 或 'serif'
-  })
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left')
-  const [mirror, setMirror] = useState({
-    horizontal: false,
-    vertical: false
-  })
-  const [scriptId, setScriptId] = useState<string | null>(null)
+  const [textAlign, setTextAlign] = useState<TextAlign>('center')
+  const [textCase, setTextCase] = useState<TextCase>('default')
+  const [fontFamily, setFontFamily] = useState<FontFamily>('sans')
+  const [isBold, setIsBold] = useState(false)
+  const [speed, setSpeed] = useState(1.0)
 
-  // Refs for elements
-  const fullscreenRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const initializedRef = useRef(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editContent, setEditContent] = useState("")
+  const [showTextEditor, setShowTextEditor] = useState(false)
+  const [textEditorContent, setTextEditorContent] = useState("")
 
-  // Check for script ID in URL
-  const scriptIdParam = searchParams.get("id")
-  
-  // Script content
-  const [scriptContent, setScriptContent] = useState(getDefaultScriptContent())
-
-  // Load script content on mount
-  useEffect(() => {
-    // 首先检查URL中是否指定了脚本ID
-    if (scriptIdParam) {
-      const script = getScript(scriptIdParam);
-      if (script) {
-        setScriptContent(script.content);
-        setScriptId(script.id);
-        
-        // 如果脚本有保存的设置，应用它们
-        if (script.settings) {
-          if (script.settings.speed) setSpeed(script.settings.speed);
-          if (script.settings.fontSize) setFontSize(script.settings.fontSize);
-          if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight);
-        }
-        return;
+  const getTextWidth = (text: string): number => {
+    let width = 0
+    for (const char of text) {
+      if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(char)) {
+        width += 2
+      } else {
+        width += 1
       }
     }
-    
-    // 如果没有指定ID或ID无效，尝试加载当前脚本
-    const currentScriptId = getCurrentScript();
-    if (currentScriptId) {
-      const script = getScript(currentScriptId);
-      if (script) {
-        setScriptContent(script.content);
-        setScriptId(script.id);
-        
-        // 应用保存的设置
-        if (script.settings) {
-          if (script.settings.speed) setSpeed(script.settings.speed);
-          if (script.settings.fontSize) setFontSize(script.settings.fontSize);
-          if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight);
-        }
-        return;
-      }
-    }
-    
-    // 如果没有当前脚本，使用默认内容
-    setScriptContent(getDefaultScriptContent());
-  }, [scriptIdParam]);
-  
-  // Calculate script lines
-  const scriptLines = scriptContent.split("\n")
+    return width
+  }
 
-  // Adjust speed
-  const adjustSpeed = (amount: number) => {
-    setSpeed((prev) => {
-      const newSpeed = Number.parseFloat((prev + amount).toFixed(1))
-      return Math.max(0.1, Math.min(10.0, newSpeed))
+  const smartSplitText = useCallback((text: string, customFontSize?: number): string[] => {
+    const currentFontSize = customFontSize || fontSize
+    const containerWidth = 896 - 64
+    const charWidth = currentFontSize * 0.55
+    const charsPerLine = Math.floor(containerWidth / charWidth)
+    const maxWidth = Math.max(10, Math.min(charsPerLine, 40))
+
+    const result: string[] = []
+    const paragraphs = text.split(/\n+/)
+
+    paragraphs.forEach(para => {
+      const trimmed = para.trim()
+      if (!trimmed) return
+
+      if (getTextWidth(trimmed) <= maxWidth) {
+        result.push(trimmed)
+      } else {
+        const isChinese = /[\u4e00-\u9fff]/.test(trimmed)
+
+        if (isChinese) {
+          let currentLine = ""
+          for (const char of trimmed) {
+            const testLine = currentLine + char
+            if (getTextWidth(testLine) <= maxWidth) {
+              currentLine = testLine
+            } else {
+              if (currentLine) result.push(currentLine)
+              currentLine = char
+            }
+          }
+          if (currentLine) result.push(currentLine)
+        } else {
+          const words = trimmed.split(/\s+/)
+          let currentLine = ""
+
+          words.forEach(word => {
+            const testLine = currentLine ? `${currentLine} ${word}` : word
+            if (getTextWidth(testLine) <= maxWidth) {
+              currentLine = testLine
+            } else {
+              if (currentLine) result.push(currentLine)
+              currentLine = word
+            }
+          })
+          if (currentLine) result.push(currentLine)
+        }
+      }
     })
-  }
 
-  // Adjust font size
-  const adjustFontSize = (amount: number) => {
-    setFontSize((prev) => Math.max(20, Math.min(64, prev + amount)))
-  }
+    return result
+  }, [fontSize])
 
-  // Adjust line height
-  const adjustLineHeight = (amount: number) => {
-    setLineHeight((prev) => Math.max(1.0, Math.min(2.5, Number.parseFloat((prev + amount).toFixed(1)))))
-  }
-
-  // Reset to start
-  const resetToStart = () => {
-    setCurrentLine(0)
-    setIsPlaying(false)
-  }
-
-  // Start dedicated playback
-  const startDedicatedPlayback = () => {
-    // 保存当前脚本和设置
-    const settings = {
-      speed,
-      fontSize,
-      lineHeight
-    };
-    
-    // 保存脚本到localStorage
-    const id = saveScript(scriptContent, "未命名脚本", scriptId || undefined, settings);
-    
-    // 跳转到播放页面，只传递ID
-    router.push(`/playback?id=${id}`);
-  }
-
-  // Toggle fullscreen
-  const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      const elem = fullscreenRef.current;
-      if (elem) {
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen();
-        } else if ((elem as any).webkitRequestFullscreen) {
-          (elem as any).webkitRequestFullscreen();
-        } else if ((elem as any).msRequestFullscreen) {
-          (elem as any).msRequestFullscreen();
-        }
-      }
-      setIsFullscreen(true)
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if ((document as any).webkitExitFullscreen) {
-        (document as any).webkitExitFullscreen();
-      } else if ((document as any).msExitFullscreen) {
-        (document as any).msExitFullscreen();
-      }
-      setIsFullscreen(false)
-    }
-  }
-
-  // Listen for fullscreen change
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(
-        !!document.fullscreenElement || 
-        !!((document as any).webkitFullscreenElement) || 
-        !!((document as any).msFullscreenElement)
-      )
-    }
+    if (initializedRef.current) return
+    initializedRef.current = true
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange)
-    document.addEventListener("webkitfullscreenchange", handleFullscreenChange)
-    document.addEventListener("msfullscreenchange", handleFullscreenChange)
+    if (scriptId) {
+      const script = getScript(scriptId)
+      if (script) {
+        setOriginalContent(script.content)
+        if (script.settings) {
+          if (script.settings.speed) setSpeed(script.settings.speed)
+          if (script.settings.fontSize) setFontSize(script.settings.fontSize)
+          if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight)
+        }
+        return
+      }
+    }
+    const defaultScript = getDefaultScriptContent()
+    setOriginalContent(defaultScript)
+  }, [scriptId])
+
+  useEffect(() => {
+    if (originalContent) {
+      setScriptLines(smartSplitText(originalContent))
+    }
+  }, [fontSize, smartSplitText, originalContent])
+
+  const applyTextCase = (text: string): string => {
+    switch (textCase) {
+      case 'uppercase': return text.toUpperCase()
+      case 'lowercase': return text.toLowerCase()
+      case 'capitalize': return text.replace(/\b\w/g, c => c.toUpperCase())
+      default: return text
+    }
+  }
+
+  const autoSplitLines = useCallback(() => {
+    const newLines = smartSplitText(originalContent)
+    const newContent = newLines.join("\n")
+    setOriginalContent(newContent)
+    setScriptLines(newLines)
+  }, [originalContent, smartSplitText])
+
+  const togglePlay = useCallback(() => {
+    if (!isPlaying) {
+      const newLines = smartSplitText(originalContent)
+      setScriptLines(newLines)
+      if (currentLine >= newLines.length - 1 || currentLine === -1) {
+        setCurrentLine(-1)
+        setCountdown(3)
+        setShowEnd(false)
+      }
+      setShowSettings(false)
+    }
+    setIsPlaying(!isPlaying)
+  }, [isPlaying, currentLine, originalContent, smartSplitText])
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null
+
+    if (isPlaying) {
+      if (currentLine === -1) {
+        timer = setTimeout(() => {
+          if (countdown > 1) {
+            setCountdown(countdown - 1)
+          } else {
+            setCurrentLine(0)
+            setCountdown(3)
+            setShowEnd(false)
+          }
+        }, 1000)
+      } else {
+        timer = setTimeout(() => {
+          if (currentLine < scriptLines.length - 1) {
+            setCurrentLine(currentLine + 1)
+            setShowEnd(false)
+          } else {
+            setShowEnd(true)
+            setIsPlaying(false)
+            setShowSettings(true)
+          }
+        }, 2000 / speed)
+      }
+    }
 
     return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange)
-      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange)
-      document.removeEventListener("msfullscreenchange", handleFullscreenChange)
+      if (timer) clearTimeout(timer)
     }
+  }, [isPlaying, currentLine, countdown, scriptLines.length, speed])
+
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      const isInputFocused = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT'
+
+      if (isEditing || isInputFocused) return
+
+      switch (e.key) {
+        case " ":
+          e.preventDefault()
+          togglePlay()
+          break
+        case "ArrowUp":
+          e.preventDefault()
+          if (!isPlaying) setSpeed(prev => Math.min(4.0, +(prev + 0.25).toFixed(2)))
+          break
+        case "ArrowDown":
+          e.preventDefault()
+          if (!isPlaying) setSpeed(prev => Math.max(0.25, +(prev - 0.25).toFixed(2)))
+          break
+        case "ArrowLeft":
+          e.preventDefault()
+          if (currentLine > 0) setCurrentLine(currentLine - 1)
+          break
+        case "ArrowRight":
+          e.preventDefault()
+          if (currentLine < scriptLines.length - 1) setCurrentLine(currentLine + 1)
+          break
+        case "Escape":
+          e.preventDefault()
+          if (currentLine >= 0) {
+            setCurrentLine(-1)
+            setShowEnd(false)
+          } else {
+            router.push("/")
+          }
+          break
+        case "h":
+          e.preventDefault()
+          setShowSettings(!showSettings)
+          break
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isEditing, togglePlay, scriptLines.length, showSettings, router, isPlaying, currentLine])
+
+  const handleLineClick = (index: number) => {
+    if (isPlaying) return
+    setCurrentLine(index)
+    setIsEditing(true)
+    setEditContent(scriptLines[index])
+  }
+
+  const handleEditComplete = () => {
+    if (isEditing) {
+      const newLines = [...scriptLines]
+      newLines[currentLine] = editContent
+      setScriptLines(newLines)
+      setOriginalContent(newLines.join("\n"))
+      setIsEditing(false)
+    }
+  }
+
+  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      handleEditComplete()
+    } else if (e.key === "Escape") {
+      setIsEditing(false)
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const resetToStart = useCallback(() => {
+    setCurrentLine(-1)
+    setIsPlaying(false)
+    setShowEnd(false)
+    setCountdown(3)
   }, [])
 
-  // 自动保存脚本内容
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      if (scriptContent.trim() !== '') {
-        const settings = {
-          speed,
-          fontSize,
-          lineHeight
-        };
-        const id = saveScript(scriptContent, "未命名脚本", scriptId || undefined, settings);
-        if (!scriptId) {
-          setScriptId(id);
-        }
-      }
-    }, 30000); // 每30秒自动保存一次
-    
-    return () => clearInterval(autoSaveInterval);
-  }, [scriptContent, scriptId, speed, fontSize, lineHeight]);
-
-  // 手动保存脚本
-  const handleManualSave = () => {
-    if (scriptContent.trim() !== '') {
-      const settings = {
-        speed,
-        fontSize,
-        lineHeight
-      };
-      const id = saveScript(scriptContent, "未命名脚本", scriptId || undefined, settings);
-      setScriptId(id);
-      
-      // 提示用户保存成功
-      alert('脚本已保存！');
-    }
-  };
-
-  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-    
-    // Check file size (2MB limit)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('File size must be less than 2MB')
-      return
-    }
-
-    // Check file type
-    const allowedTypes = ['text/markdown', 'text/plain', 'application/msword', 
-                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
-    if (!allowedTypes.includes(file.type)) {
-      alert('Only .md, .txt, and .doc files are supported')
-      return
-    }
-
-    try {
-      const text = await file.text()
-      setScriptContent(text)
-      setCurrentLine(0) // Reset current line when importing new content
-    } catch (error) {
-      alert('Error reading file. Please try again.')
-    }
-  }
-
-  const handleSave = () => {
-    const blob = new Blob([scriptContent], { type: 'text/markdown' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'teleprompter-script.md'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
-
-  const handleClear = () => {
-    if (confirm('Are you sure you want to clear all content?')) {
-      setScriptContent('')
-      setCurrentLine(0)
-    }
-  }
-
-  // 文本工具函数
-  const handleUpperCase = () => {
-    setScriptContent(scriptContent.toUpperCase())
-  }
-
-  const handleLowerCase = () => {
-    setScriptContent(scriptContent.toLowerCase())
-  }
-
-  const handleAddMarker = () => {
-    const marker = "\n[MARKER]\n"
-    const cursorPosition = (document.activeElement as HTMLTextAreaElement)?.selectionStart
-    if (typeof cursorPosition === 'number') {
-      const newContent = scriptContent.slice(0, cursorPosition) + marker + scriptContent.slice(cursorPosition)
-      setScriptContent(newContent)
-    } else {
-      setScriptContent(scriptContent + marker)
-    }
-  }
-
-  const handleExport = () => {
-    // 创建导出内容，包含基本格式信息
-    const exportData = {
-      content: scriptContent,
-      settings: {
-        fontSize,
-        lineHeight,
-        speed
-      },
-      metadata: {
-        exportDate: new Date().toISOString(),
-        lineCount: scriptLines.length,
-        estimatedTime: Math.ceil((scriptLines.length * 2) / speed)
-      }
-    }
-    
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'teleprompter-export.json'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
-
-  // 字体样式处理函数
-  const handleFontStyleChange = (style: 'normal' | 'bold' | 'sans' | 'serif') => {
-    if (style === 'normal' || style === 'bold') {
-      setFontStyle(prev => ({ ...prev, weight: style }))
-    } else {
-      setFontStyle(prev => ({ ...prev, family: style }))
-    }
-  }
-
-  // 文本对齐处理函数
-  const handleTextAlign = (align: 'left' | 'center' | 'right') => {
-    setTextAlign(align)
-  }
-
-  // 镜像处理函数
-  const handleMirror = (direction: 'horizontal' | 'vertical') => {
-    setMirror(prev => ({
-      ...prev,
-      [direction]: !prev[direction]
-    }))
-  }
-
-  // Render the teleprompter display
-  const renderTeleprompter = () => {
-    return (
-      <div className="flex-[0_0_70%] bg-black text-white flex flex-col" ref={fullscreenRef}>
-        {/* Preview header - Minimal */}
-        <div className="bg-gray-900 px-4 py-2 flex justify-between items-center text-xs">
-          <span className="text-gray-400">Preview</span>
-          <div className="flex items-center gap-3 text-gray-400">
-            <span>{scriptLines.length} lines</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 hover:text-white"
-              onClick={toggleFullscreen}
-            >
-              <Expand className="h-3 w-3" />
-            </Button>
-          </div>
+  return (
+    <div ref={containerRef} className="fixed inset-0 bg-black text-white flex flex-col">
+      {/* Top Bar */}
+      <div className={`bg-gray-900 px-6 py-3 flex justify-between items-center border-b border-gray-800 transition-opacity duration-300 ${isPlaying && !showSettings ? 'opacity-0' : 'opacity-100'}`}>
+        <Link href="/" className="flex items-center gap-2">
+          <Logo variant="light" size={24} withText={true} />
+        </Link>
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={togglePlay}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6"
+          >
+            {isPlaying ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
+            {isPlaying ? "Pause" : "Start Playback"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-white"
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            <Settings className="w-5 h-5" />
+          </Button>
         </div>
+      </div>
 
-        {/* Text display area with improved alignment */}
-        <div className="flex-1 overflow-hidden relative">
-          {/* Floating speed control - top right */}
-          {!isFullscreen && (
-            <div className="absolute top-4 right-4 z-20">
-              {/* Speed control */}
-              <div className="bg-black/80 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-3 border border-gray-700 mb-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-white hover:text-orange-500 hover:bg-gray-800"
-                  onClick={() => adjustSpeed(-0.1)}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="text-white font-mono text-sm min-w-[50px] text-center">{speed.toFixed(1)}×</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-white hover:text-orange-500 hover:bg-gray-800"
-                  onClick={() => adjustSpeed(0.1)}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Teleprompter Preview / Editor */}
+        <div className="flex-1 overflow-hidden relative flex flex-col">
+          {/* Countdown Display - centered in main area */}
+          {currentLine === -1 && isPlaying && (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-8xl font-bold text-orange-500 animate-pulse">{countdown}</div>
+            </div>
+          )}
+
+          {/* Orange Indicator Bar */}
+          {currentLine >= 0 && !showEnd && (
+            <div
+              className="absolute left-0 right-0 bg-orange-500/20 border-t-2 border-b-2 border-orange-500 z-20 pointer-events-none"
+              style={{
+                height: `${fontSize * lineHeight}px`,
+                top: "50%",
+                transform: "translateY(-50%)"
+              }}
+            />
+          )}
+
+          {/* END Display - click to return to edit mode */}
+          {showEnd && (
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center z-30 cursor-pointer"
+              onClick={() => {
+                setCurrentLine(-1)
+                setShowEnd(false)
+              }}
+            >
+              <div
+                className="text-orange-500 font-bold"
+                style={{ fontSize: `${fontSize}px` }}
+              >
+                END
               </div>
+              <div className="text-gray-500 text-sm mt-4">Click to edit</div>
+            </div>
+          )}
 
-              {/* Keyboard shortcuts hint */}
-              <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-300 border border-gray-700/50">
-                <div className="font-medium mb-1 text-gray-200">Shortcuts</div>
-                <div className="space-y-0.5">
-                  <div className="flex justify-between gap-3">
-                    <span className="text-gray-400">Space</span>
-                    <span>Play/Pause</span>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <span className="text-gray-400">↑/↓</span>
-                    <span>Speed</span>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <span className="text-gray-400">F11</span>
-                    <span>Fullscreen</span>
-                  </div>
-                </div>
+          {/* Edit Mode - Full textarea when not playing and currentLine is -1 */}
+          {!isPlaying && currentLine === -1 && !showEnd && (
+            <div className="absolute inset-0 flex flex-col items-center p-8">
+              <textarea
+                value={originalContent}
+                onChange={(e) => {
+                  setOriginalContent(e.target.value)
+                  setScriptLines(smartSplitText(e.target.value))
+                }}
+                placeholder="Paste or type your script here..."
+                className="w-full max-w-4xl flex-1 bg-transparent text-white resize-none focus:outline-none overflow-y-auto playback-scrollbar"
+                style={{
+                  fontSize: `${fontSize}px`,
+                  lineHeight: lineHeight,
+                  fontFamily: fontFamily === 'serif' ? 'Georgia, serif' : 'system-ui, sans-serif',
+                  fontWeight: isBold ? 'bold' : 'normal',
+                  textAlign: textAlign,
+                  textTransform: textCase === 'uppercase' ? 'uppercase' : textCase === 'lowercase' ? 'lowercase' : textCase === 'capitalize' ? 'capitalize' : 'none',
+                }}
+              />
+            </div>
+          )}
+
+          {/* Playback Mode - Script Lines */}
+          {currentLine >= 0 && !showEnd && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full max-w-4xl px-8 relative h-full">
+                {scriptLines.map((line, index) => {
+                  const position = index - currentLine
+                  if (Math.abs(position) > 10) return null
+                  const lineHeightPx = fontSize * lineHeight
+                  const lineTop = `calc(50% + ${position * lineHeightPx}px - ${lineHeightPx / 2}px)`
+
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => !isPlaying && handleLineClick(index)}
+                      className={`absolute left-0 right-0 px-4 transition-all duration-500 flex items-center ${!isPlaying ? 'cursor-pointer hover:bg-gray-800/30' : ''}`}
+                      style={{
+                        top: lineTop,
+                        height: `${lineHeightPx}px`,
+                        fontSize: `${fontSize}px`,
+                        lineHeight: `${lineHeightPx}px`,
+                        fontFamily: fontFamily === 'serif' ? 'Georgia, serif' : 'system-ui, sans-serif',
+                        fontWeight: isBold ? 'bold' : 'normal',
+                        justifyContent: textAlign === 'left' ? 'flex-start' : textAlign === 'right' ? 'flex-end' : 'center',
+                        color: position === 0 ? '#fff' : '#666',
+                        opacity: Math.abs(position) < 5 ? 1 : 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {isEditing && position === 0 ? (
+                        <input
+                          type="text"
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          onBlur={handleEditComplete}
+                          onKeyDown={handleEditKeyDown}
+                          autoFocus
+                          className="w-full bg-transparent border-none outline-none text-white text-center"
+                          style={{
+                            fontSize: `${fontSize}px`,
+                            fontFamily: fontFamily === 'serif' ? 'Georgia, serif' : 'system-ui, sans-serif',
+                            fontWeight: isBold ? 'bold' : 'normal',
+                          }}
+                        />
+                      ) : (
+                        applyTextCase(line) || " "
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )}
 
-          <div className="absolute inset-0 flex">
-            {/* Left side line numbers and tracking indicator */}
-            <div className="w-10 bg-gray-900 flex flex-col">
-              {scriptLines.map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-full flex items-center justify-center ${
-                    currentLine === index ? "text-orange-500" : "text-gray-600"
-                  }`}
-                  style={{
-                    height: `${fontSize * lineHeight}px`,
-                    transition: "color 0.2s ease",
-                  }}
-                >
-                  {currentLine === index && (
-                    <div className="w-2 h-2 rounded-full bg-orange-500 mr-1 animate-pulse"></div>
-                  )}
-                  <span className="text-xs font-mono">{index + 1}</span>
-                </div>
-              ))}
+          {/* Keyboard Shortcuts - Show when in edit mode */}
+          {!isPlaying && currentLine === -1 && !showEnd && (
+            <div className="absolute bottom-8 left-0 right-0 text-center text-gray-500 text-sm">
+              <div className="inline-flex gap-6">
+                <span><kbd className="bg-gray-800 px-2 py-1 rounded">Space</kbd> Play</span>
+                <span><kbd className="bg-gray-800 px-2 py-1 rounded">↑/↓</kbd> Speed</span>
+                <span><kbd className="bg-gray-800 px-2 py-1 rounded">H</kbd> Toggle Panel</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Settings Panel */}
+        {showSettings && (
+        <div className="w-80 bg-gray-900 border-l border-gray-800 overflow-y-auto">
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-medium">Display Settings</h3>
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white text-xs"
+                onClick={() => {
+                  setFontSize(36); setLineHeight(1.5); setTextAlign('center');
+                  setTextCase('default'); setFontFamily('sans'); setIsBold(false); setSpeed(1.0);
+                }}>
+                <RotateCcw className="w-3 h-3 mr-1" /> Reset
+              </Button>
             </div>
 
-            {/* Text area with improved alignment */}
-            <div className="flex-1 overflow-hidden">
-              <div
-                className="transition-transform duration-500 ease-out px-8"
-                style={{
-                  transform: `
-                    translateY(calc(50vh - ${(fontSize * lineHeight) / 2}px - ${currentLine * fontSize * lineHeight}px))
-                    ${mirror.horizontal ? 'scaleX(-1)' : ''}
-                    ${mirror.vertical ? 'scaleY(-1)' : ''}
-                  `,
-                }}
-              >
-                {scriptLines.map((line, index) => (
-                  <div
-                    key={index}
-                    className={`whitespace-pre-wrap transition-colors duration-300 ${
-                      currentLine === index ? "bg-gray-800 text-white" : "text-gray-400"
-                    } ${fontStyle.family === 'serif' ? 'font-serif' : 'font-sans'}`}
-                    style={{
-                      fontSize: `${fontSize}px`,
-                      lineHeight: `${lineHeight}`,
-                      minHeight: `${fontSize * lineHeight}px`,
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: fontStyle.weight,
-                      justifyContent: textAlign === 'left' ? 'flex-start' : 
-                                    textAlign === 'right' ? 'flex-end' : 'center',
-                      width: '100%'
-                    }}
-                  >
-                    {line || " "}
-                  </div>
+            {/* Font Size */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Font Size</label>
+              <div className="flex items-center justify-between bg-gray-800 rounded-lg p-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setFontSize(prev => Math.max(20, prev - 2))}>
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <span className="text-white font-mono">{fontSize}pt</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setFontSize(prev => Math.min(72, prev + 2))}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Line Height */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Line Height</label>
+              <div className="flex items-center justify-between bg-gray-800 rounded-lg p-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setLineHeight(prev => Math.max(1.0, +(prev - 0.1).toFixed(1)))}>
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <span className="text-white font-mono">{lineHeight.toFixed(1)}x</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setLineHeight(prev => Math.min(3.0, +(prev + 0.1).toFixed(1)))}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Text Align */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Text Align</label>
+              <div className="grid grid-cols-3 gap-2">
+                {(['left', 'center', 'right'] as TextAlign[]).map(align => (
+                  <Button key={align} variant={textAlign === align ? "default" : "outline"}
+                    className={`text-xs ${textAlign === align ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-800 border-gray-700 hover:bg-gray-700"}`}
+                    onClick={() => setTextAlign(align)}>
+                    {align === 'left' ? 'Left' : align === 'center' ? 'Center' : 'Right'}
+                  </Button>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Minimal controls for fullscreen mode */}
-        {isFullscreen && (
-          <div className="bg-gray-900 p-2 flex justify-between items-center">
-            <div className="flex space-x-2">
-              {/* Text alignment controls */}
-              <Button
-                variant="ghost"
-                className={`w-8 h-8 ${textAlign === 'left' ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
-                onClick={() => handleTextAlign('left')}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="15" y2="12" />
-                  <line x1="3" y1="18" x2="18" y2="18" />
-                </svg>
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-8 h-8 ${textAlign === 'center' ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
-                onClick={() => handleTextAlign('center')}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="6" y1="12" x2="18" y2="12" />
-                  <line x1="4" y1="18" x2="20" y2="18" />
-                </svg>
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-8 h-8 ${textAlign === 'right' ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
-                onClick={() => handleTextAlign('right')}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="9" y1="12" x2="21" y2="12" />
-                  <line x1="6" y1="18" x2="21" y2="18" />
-                </svg>
-              </Button>
-            </div>
-
-            <div className="flex space-x-4">
-              <Button
-                variant="ghost"
-                className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                onClick={() => adjustSpeed(-0.1)}
-              >
-                <Minus className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                onClick={resetToStart}
-              >
-                <SkipBack className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-12 h-10 bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center"
-                onClick={startDedicatedPlayback}
-              >
-                <Play className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center hover:text-orange-500"
-                onClick={() => adjustSpeed(0.1)}
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <div className="flex space-x-2">
-              {/* Mirror controls */}
-              <Button
-                variant="ghost"
-                className={`w-8 h-8 ${mirror.horizontal ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
-                onClick={() => handleMirror('horizontal')}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 3v18M4 6h16M4 18h16" />
-                  <path d="M7 9l-3 3 3 3M17 9l3 3-3 3" />
-                </svg>
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-8 h-8 ${mirror.vertical ? 'bg-gray-700' : 'bg-gray-900'} text-white flex items-center justify-center hover:text-orange-500`}
-                onClick={() => handleMirror('vertical')}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 12h18M6 4v16M18 4v16" />
-                  <path d="M9 7l3-3 3 3M9 17l3 3 3-3" />
-                </svg>
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  // If in fullscreen mode, only show the teleprompter
-  if (isFullscreen) {
-    return renderTeleprompter()
-  }
-
-  return (
-    <div className="flex flex-col h-screen bg-gray-200">
-      {/* Top control bar - Simplified */}
-      <div className="w-full bg-white flex items-center justify-between px-6 py-3 border-b border-gray-200">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <Logo variant="default" size={28} withText={false} />
-          </Link>
-          {scriptId && (
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <FileText className="w-3 h-3" />
-              <span>ID: {scriptId.substring(0, 8)}</span>
-            </div>
-          )}
-        </div>
-        <Link href="/">
-          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
-            Exit
-          </Button>
-        </Link>
-      </div>
-
-      {/* Main content area - 30/70 split */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left side editor panel - 30% */}
-        <div className="w-[30%] overflow-hidden bg-white flex flex-col border-r border-gray-200">
-          {/* Script editor header */}
-          <div className="bg-gray-50 px-4 py-2 flex justify-between items-center text-xs border-b border-gray-200">
-            <div className="font-medium text-gray-700">Script Editor</div>
-            <div className="text-gray-500">{scriptLines.length} lines · ~{Math.round(scriptLines.length * 2.5)}s</div>
-          </div>
-
-          {/* Text area */}
-          <textarea
-            className="flex-1 p-4 focus:outline-none resize-none font-sans text-gray-900"
-            value={scriptContent}
-            onChange={(e) => setScriptContent(e.target.value)}
-            placeholder="Enter your script here..."
-            style={{ fontSize: "16px", lineHeight: "1.6" }}
-          />
-
-        </div>
-
-        {/* Right side teleprompter preview panel */}
-        {renderTeleprompter()}
-      </div>
-
-      {/* Bottom control panel - Simplified single row */}
-      <div className="bg-gray-200 border-t border-gray-300">
-        {/* Main controls - always visible */}
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between gap-8 max-w-6xl mx-auto">
-            {/* Left: Primary controls */}
-            <div className="flex items-center gap-6">
-              {/* Font Size */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-gray-600">FONT</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 bg-white hover:bg-gray-100"
-                  onClick={() => adjustFontSize(-2)}
-                >
-                  <Minus className="h-3 w-3" />
-                </Button>
-                <span className="font-mono text-sm min-w-[45px] text-center">{fontSize}px</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 bg-white hover:bg-gray-100"
-                  onClick={() => adjustFontSize(2)}
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </div>
-
-              {/* Separator */}
-              <div className="h-6 w-px bg-gray-300"></div>
-
-              {/* Import/Export */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 bg-white hover:bg-gray-100 text-xs"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Upload className="h-3 w-3 mr-1" />
-                  Import
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 bg-white hover:bg-gray-100 text-xs"
-                  onClick={handleSave}
-                >
-                  <Download className="h-3 w-3 mr-1" />
-                  Export
-                </Button>
-              </div>
-            </div>
-
-            {/* Center: Main action button */}
-            <Button
-              className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white font-mono"
-              onClick={startDedicatedPlayback}
-            >
-              <Play className="h-4 w-4 mr-2" />
-              START PLAYBACK
-            </Button>
-
-            {/* Right: Secondary controls */}
-            <div className="flex items-center gap-6">
-              {/* Quick actions */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 bg-white hover:bg-gray-100 text-xs"
-                  onClick={toggleFullscreen}
-                >
-                  <Expand className="h-3 w-3 mr-1" />
-                  Preview
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 bg-green-600 hover:bg-green-700 text-white text-xs"
-                  onClick={handleManualSave}
-                >
-                  <Save className="h-3 w-3 mr-1" />
-                  Save
-                </Button>
-              </div>
-
-              {/* Separator */}
-              <div className="h-6 w-px bg-gray-300"></div>
-
-              {/* Advanced settings toggle */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`h-8 text-xs ${activeTab !== 'EDIT' ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white hover:bg-gray-100'}`}
-                onClick={() => setActiveTab(activeTab === 'EDIT' ? 'ADVANCED' : 'EDIT')}
-              >
-                <Settings className="h-3 w-3 mr-1" />
-                Advanced
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Advanced panel - collapsible */}
-        {activeTab === "ADVANCED" && (
-          <div className="px-6 pb-4 border-t border-gray-300 bg-gray-100">
-            <div className="py-4 max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Line Height */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">LINE HEIGHT</div>
-                  <div className="flex items-center justify-between">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => adjustLineHeight(-0.1)}
-                    >
-                      <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="font-mono text-sm">{lineHeight.toFixed(1)}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => adjustLineHeight(0.1)}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Font Style */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">FONT STYLE</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Button
-                      variant={fontStyle.weight === 'normal' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => handleFontStyleChange('normal')}
-                    >
-                      Normal
-                    </Button>
-                    <Button
-                      variant={fontStyle.weight === 'bold' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => handleFontStyleChange('bold')}
-                    >
-                      Bold
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Font Family */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">FONT FAMILY</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Button
-                      variant={fontStyle.family === 'sans' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => handleFontStyleChange('sans')}
-                    >
-                      Sans
-                    </Button>
-                    <Button
-                      variant={fontStyle.family === 'serif' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => handleFontStyleChange('serif')}
-                    >
-                      Serif
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Text Alignment */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">ALIGNMENT</div>
-                  <div className="grid grid-cols-3 gap-1">
-                    <Button
-                      variant={textAlign === 'left' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 w-full p-0"
-                      onClick={() => handleTextAlign('left')}
-                    >
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <line x1="3" y1="12" x2="15" y2="12" />
-                        <line x1="3" y1="18" x2="18" y2="18" />
-                      </svg>
-                    </Button>
-                    <Button
-                      variant={textAlign === 'center' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 w-full p-0"
-                      onClick={() => handleTextAlign('center')}
-                    >
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <line x1="6" y1="12" x2="18" y2="12" />
-                        <line x1="4" y1="18" x2="20" y2="18" />
-                      </svg>
-                    </Button>
-                    <Button
-                      variant={textAlign === 'right' ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 w-full p-0"
-                      onClick={() => handleTextAlign('right')}
-                    >
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <line x1="9" y1="12" x2="21" y2="12" />
-                        <line x1="6" y1="18" x2="21" y2="18" />
-                      </svg>
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Text Tools */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">TEXT TOOLS</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={handleUpperCase}
-                    >
-                      UPPER
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={handleLowerCase}
-                    >
-                      lower
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Mirror Controls */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">MIRROR</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Button
-                      variant={mirror.horizontal ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => handleMirror('horizontal')}
-                    >
-                      H-Flip
-                    </Button>
-                    <Button
-                      variant={mirror.vertical ? 'default' : 'outline'}
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={() => handleMirror('vertical')}
-                    >
-                      V-Flip
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Utilities */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">UTILITIES</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={handleAddMarker}
-                    >
-                      Marker
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs text-red-600 hover:text-red-700"
-                      onClick={handleClear}
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Export JSON */}
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="text-xs font-mono text-gray-600 mb-2">ADVANCED</div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs w-full"
-                    onClick={handleExport}
-                  >
-                    Export JSON
+            {/* Text Case */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Text Case</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { value: 'default', label: 'Default' },
+                  { value: 'capitalize', label: 'Capitalize Aa' },
+                  { value: 'uppercase', label: 'Upper AA' },
+                  { value: 'lowercase', label: 'Lower aa' },
+                ].map(item => (
+                  <Button key={item.value} variant={textCase === item.value ? "default" : "outline"}
+                    className={`text-xs ${textCase === item.value ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-800 border-gray-700 hover:bg-gray-700"}`}
+                    onClick={() => setTextCase(item.value as TextCase)}>
+                    {item.label}
                   </Button>
-                </div>
+                ))}
               </div>
             </div>
+
+            {/* Font Style */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Font Style</label>
+              <div className="grid grid-cols-3 gap-2">
+                <Button variant={fontFamily === 'sans' ? "default" : "outline"}
+                  className={`text-xs ${fontFamily === 'sans' ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-800 border-gray-700 hover:bg-gray-700"}`}
+                  onClick={() => setFontFamily('sans')}>
+                  Sans-serif
+                </Button>
+                <Button variant={fontFamily === 'serif' ? "default" : "outline"}
+                  className={`text-xs ${fontFamily === 'serif' ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-800 border-gray-700 hover:bg-gray-700"}`}
+                  onClick={() => setFontFamily('serif')}>
+                  Serif
+                </Button>
+                <Button variant={isBold ? "default" : "outline"}
+                  className={`text-xs ${isBold ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-800 border-gray-700 hover:bg-gray-700"}`}
+                  onClick={() => setIsBold(!isBold)}>
+                  Bold
+                </Button>
+              </div>
+            </div>
+
+            {/* Speed */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Speed</label>
+              <div className="flex items-center justify-between bg-gray-800 rounded-lg p-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSpeed(prev => Math.max(0.25, +(prev - 0.25).toFixed(2)))}>
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <span className="text-white font-mono">{speed}x</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSpeed(prev => Math.min(4.0, +(prev + 0.25).toFixed(2)))}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Current Line */}
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block">Current Line</label>
+              <div className="flex items-center justify-between bg-gray-800 rounded-lg p-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCurrentLine(prev => Math.max(0, prev - 1))}>
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <span className="text-orange-500 font-mono font-bold">{Math.max(1, currentLine + 1)}</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCurrentLine(prev => Math.min(scriptLines.length - 1, prev + 1))}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Line Navigation */}
+            <div className="mb-6">
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <Button variant="outline" className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-xs"
+                  onClick={() => setCurrentLine(prev => Math.max(0, prev - 1))}>
+                  <ChevronUp className="w-4 h-4 mr-1" /> Prev
+                </Button>
+                <Button variant="outline" className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-xs"
+                  onClick={() => setCurrentLine(prev => Math.min(scriptLines.length - 1, prev + 1))}>
+                  <ChevronDown className="w-4 h-4 mr-1" /> Next
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-xs"
+                  onClick={() => { setCurrentLine(0); setShowEnd(false); }}>
+                  <ChevronsUp className="w-4 h-4 mr-1" /> First
+                </Button>
+                <Button variant="outline" className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-xs"
+                  onClick={() => setCurrentLine(scriptLines.length - 1)}>
+                  <ChevronsDown className="w-4 h-4 mr-1" /> Last
+                </Button>
+              </div>
+            </div>
+
+            {/* Auto Split */}
+            {!isPlaying && (
+              <Button
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-6 text-base mb-4"
+                onClick={autoSplitLines}
+              >
+                <Play className="w-4 h-4 mr-2" /> Auto Split Lines
+              </Button>
+            )}
+
+            {/* Back to Edit Mode */}
+            {!isPlaying && currentLine >= 0 && (
+              <Button
+                variant="outline"
+                className="w-full bg-gray-800 border-gray-700 hover:bg-gray-700 text-white py-4 text-sm"
+                onClick={() => {
+                  setCurrentLine(-1)
+                  setShowEnd(false)
+                }}
+              >
+                <RotateCcw className="w-4 h-4 mr-2" /> Back to Edit Mode
+              </Button>
+            )}
+
           </div>
+        </div>
         )}
       </div>
 
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".txt,.md,.doc,.docx"
-        className="hidden"
-        onChange={handleImport}
-      />
-
-      {/* Bottom status bar - simplified */}
-      <div className="bg-gray-50 py-1.5 px-4 border-t border-gray-200">
-        <div className="flex justify-between items-center text-xs text-gray-400">
-          <div>v1.0.5</div>
-          <div>{new Date().toLocaleDateString()}</div>
+      {/* Text Editor Modal */}
+      {showTextEditor && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-8">
+          <div className="bg-gray-900 rounded-lg w-full max-w-4xl max-h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-gray-800">
+              <h3 className="text-lg font-medium">Edit Script</h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowTextEditor(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="flex-1 p-4 overflow-hidden">
+              <textarea
+                value={textEditorContent}
+                onChange={(e) => setTextEditorContent(e.target.value)}
+                placeholder="Paste or type your script here..."
+                className="w-full h-full bg-gray-800 text-white p-4 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+                style={{ minHeight: '400px' }}
+                autoFocus
+              />
+            </div>
+            <div className="flex justify-end gap-4 p-4 border-t border-gray-800">
+              <Button
+                variant="outline"
+                className="bg-gray-800 border-gray-700 hover:bg-gray-700"
+                onClick={() => setShowTextEditor(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-orange-500 hover:bg-orange-600"
+                onClick={() => {
+                  setOriginalContent(textEditorContent)
+                  setScriptLines(textEditorContent.split("\n").filter(line => line.trim()))
+                  setCurrentLine(0)
+                  setShowEnd(false)
+                  setShowTextEditor(false)
+                }}
+              >
+                Apply
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
 
 export default function EditorPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="fixed inset-0 bg-black flex items-center justify-center text-white">Loading...</div>}>
       <EditorContent />
     </Suspense>
   )

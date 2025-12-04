@@ -167,7 +167,7 @@ export default function FAQPage() {
                 <div className="bg-white rounded-lg shadow-md p-8 text-center">
                   <h3 className="text-xl font-bold mb-2">No Results Found</h3>
                   <p className="text-gray-600 mb-4">
-                    We couldn't find any questions matching your search criteria.
+                    We couldn&apos;t find any questions matching your search criteria.
                   </p>
                   <Button 
                     onClick={() => {
@@ -218,7 +218,7 @@ export default function FAQPage() {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-6">Still Have Questions?</h2>
           <p className="text-gray-600 text-xl max-w-3xl mx-auto mb-8">
-            We're here to help! If you couldn't find what you were looking for, please contact our support team.
+            We&apos;re here to help! If you couldn&apos;t find what you were looking for, please contact our support team.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">
