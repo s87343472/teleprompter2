@@ -90,7 +90,7 @@ export default function UpdatesPage() {
             <div className="space-y-6 md:space-y-16 relative">
               <UpdateItem
                 version="1.1.4"
-                date="December 4, 2024"
+                date="December 4, 2025"
                 title="Mobile Experience Optimization"
                 badges={[{ text: "Latest", color: "green" }, { text: "Enhancement", color: "purple" }]}
                 description="Completely redesigned mobile editor interface with improved touch interactions"
@@ -105,7 +105,7 @@ export default function UpdatesPage() {
 
               <UpdateItem
                 version="1.1.3"
-                date="December 4, 2024"
+                date="December 4, 2025"
                 title="Code Quality & Lint Fixes"
                 badges={[{ text: "Maintenance", color: "blue" }]}
                 description="Improved code quality and fixed all linting issues for better maintainability"
