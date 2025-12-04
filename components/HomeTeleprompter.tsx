@@ -4,8 +4,15 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Plus, Minus } from "lucide-react"
 
-// Sample text with shorter lines for better display
-const DEMO_TEXT = `Welcome to Teleprompter.today.
+// Sample text - shorter for mobile compatibility
+const DEMO_TEXT_MOBILE = `Welcome to T.P
+Pro teleprompter
+Clear display
+Auto-tracking
+Adjust speed
+Start now!`
+
+const DEMO_TEXT_DESKTOP = `Welcome to Teleprompter.today.
 Professional teleprompter system.
 Clear display of your content.
 Auto-tracking of current line.
@@ -18,9 +25,18 @@ export default function HomeTeleprompter() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState(1.0)
   const [currentLine, setCurrentLine] = useState(0)
-  const scriptLines = DEMO_TEXT.split('\n')
+  const [isMobile, setIsMobile] = useState(false)
   const [buttonFeedback, setButtonFeedback] = useState({ minus: false, plus: false, play: false })
   const [isHovered, setIsHovered] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const scriptLines = (isMobile ? DEMO_TEXT_MOBILE : DEMO_TEXT_DESKTOP).split('\n')
   
   // Constants for layout - keep fixed sizes
   const LINE_HEIGHT = 30;
@@ -109,9 +125,9 @@ export default function HomeTeleprompter() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Interaction hint */}
+      {/* Interaction hint - hidden on mobile */}
       {!isPlaying && isHovered && (
-        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg text-sm animate-bounce">
+        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg text-sm animate-bounce hidden sm:block">
           Click to try demo
         </div>
       )}
@@ -121,12 +137,12 @@ export default function HomeTeleprompter() {
         <div className="absolute inset-0 rounded-lg border-2 border-orange-500 animate-pulse"></div>
       )}
       
-      <div className="bg-black p-4 rounded flex flex-col items-center relative z-10">
-        <div className="font-mono text-4xl mb-4">{speed.toFixed(1)}x</div>
+      <div className="bg-black p-3 sm:p-4 rounded flex flex-col items-center relative z-10">
+        <div className="font-mono text-3xl sm:text-4xl mb-3 sm:mb-4">{speed.toFixed(1)}x</div>
         
         {/* Text display area */}
-        <div 
-          className="w-full h-[180px] bg-gray-900 rounded mb-4 overflow-hidden relative"
+        <div
+          className="w-full h-[150px] sm:h-[180px] bg-gray-900 rounded mb-3 sm:mb-4 overflow-hidden relative"
           style={{ 
             cursor: !isPlaying && isHovered ? "pointer" : "default"
           }}
@@ -151,13 +167,12 @@ export default function HomeTeleprompter() {
             }}
           >
             {scriptLines.map((line, index) => (
-              <div 
-                key={index} 
-                className={`px-4 text-center font-sans whitespace-nowrap flex items-center justify-center ${
+              <div
+                key={index}
+                className={`px-2 sm:px-4 text-center font-sans flex items-center justify-center text-xs sm:text-base ${
                   currentLine === index ? "text-white font-medium" : "text-gray-400"
                 }`}
-                style={{ 
-                  fontSize: "16px",
+                style={{
                   height: `${LINE_HEIGHT}px`,
                   lineHeight: `${LINE_HEIGHT}px`
                 }}
@@ -176,7 +191,7 @@ export default function HomeTeleprompter() {
         </div>
         
         {/* Control buttons */}
-        <div className="grid grid-cols-3 gap-3 w-full">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full">
           <Button 
             variant="ghost" 
             className={`bg-gray-700 p-2 rounded text-center font-mono transition-transform ${

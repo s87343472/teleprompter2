@@ -4,9 +4,10 @@ interface LogoProps {
   size?: number
   variant?: "default" | "light" | "dark"
   withText?: boolean
+  className?: string
 }
 
-const Logo: React.FC<LogoProps> = ({ size = 40, variant = "default", withText = true }) => {
+const Logo: React.FC<LogoProps> = ({ size = 40, variant = "default", withText = true, className = "" }) => {
   // Color configurations based on variant
   const colors = {
     default: {
@@ -29,7 +30,7 @@ const Logo: React.FC<LogoProps> = ({ size = 40, variant = "default", withText = 
   const { primary, secondary, text } = colors[variant]
 
   return (
-    <div className="flex items-center">
+    <div className={`flex items-center ${className}`}>
       <div className="relative" style={{ width: size, height: size }}>
         {/* Main logo shape - a stylized teleprompter screen */}
         <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
