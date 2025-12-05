@@ -15,20 +15,25 @@ export default function FAQPage() {
     { id: "all", name: "All Questions" },
     { id: "getting-started", name: "Getting Started" },
     { id: "features", name: "Features & Usage" },
+    { id: "cloud", name: "Cloud & Account" },
     { id: "troubleshooting", name: "Troubleshooting" }
   ]
 
   const faqData = [
     { id: "q1", category: "getting-started", question: "What is Teleprompter.today?", answer: "Teleprompter.today is a free online teleprompter system designed for content creators, speakers, and professionals. It helps you deliver smooth presentations by displaying your script at a controlled pace directly in your browser." },
-    { id: "q2", category: "getting-started", question: "Do I need to create an account?", answer: "No, you can use all teleprompter features without creating an account. Simply visit the website and start using it immediately." },
+    { id: "q2", category: "getting-started", question: "Do I need to create an account?", answer: "No, you can use all basic teleprompter features without creating an account. However, signing in with Google allows you to save scripts to the cloud and access them from any device." },
     { id: "q3", category: "getting-started", question: "Can I use it on mobile devices?", answer: "Yes, Teleprompter.today is fully responsive and works on desktop computers, tablets, and smartphones." },
     { id: "q4", category: "features", question: "How do I adjust the scrolling speed?", answer: "Use the speed control buttons in the control panel or press the up/down arrow keys on your keyboard." },
     { id: "q5", category: "features", question: "What keyboard shortcuts are available?", answer: "Space = Play/Pause, Arrow Up/Down = Adjust Speed, Arrow Left/Right = Previous/Next Line, Esc = Exit Playback, H = Hide Controls." },
-    { id: "q6", category: "features", question: "Can I format my text?", answer: "Currently, we support basic text display. Text formatting features like bold, italics, and custom fonts are planned for future updates." },
+    { id: "q6", category: "features", question: "Can I format my text?", answer: "Yes! You can adjust font size, line height, text alignment (left/center/right), text case (uppercase/lowercase/capitalize), font family (sans-serif/serif), and bold style." },
     { id: "q7", category: "features", question: "Can I control from another device?", answer: "Remote control functionality is currently under development and will be available soon." },
+    { id: "q11", category: "cloud", question: "How do I save my scripts to the cloud?", answer: "Sign in with your Google account by clicking the user icon in the top right corner. Once signed in, click your avatar and select Save to Cloud to store your current script." },
+    { id: "q12", category: "cloud", question: "Is my data secure?", answer: "Yes, all scripts are encrypted with AES-256-GCM encryption on your device before being stored. Only you can decrypt and read your scripts." },
+    { id: "q13", category: "cloud", question: "Can I access my scripts from different devices?", answer: "Yes, once you sign in with Google and save your scripts to the cloud, you can access them from any device by signing in with the same Google account." },
+    { id: "q14", category: "cloud", question: "Is cloud storage free?", answer: "Yes, cloud storage is completely free for all users." },
     { id: "q8", category: "troubleshooting", question: "The teleprompter is lagging. How can I fix this?", answer: "Try refreshing the page, using a more recent browser version, closing other resource-intensive applications, or switching to a device with better performance." },
     { id: "q9", category: "troubleshooting", question: "How do I report a bug?", answer: "You can report bugs through our Contact page. Please provide as much detail as possible." },
-    { id: "q10", category: "troubleshooting", question: "Text isn't displaying correctly. What should I do?", answer: "Try adjusting the font size and line spacing in the settings panel. If the issue persists, check your browser's zoom level or try a different browser." }
+    { id: "q10", category: "troubleshooting", question: "Text is not displaying correctly. What should I do?", answer: "Try adjusting the font size and line spacing in the settings panel. If the issue persists, check your browser zoom level or try a different browser." }
   ]
 
   const filteredFAQs = faqData.filter((faq) => {

@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app'
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged, User } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -20,10 +20,15 @@ const googleProvider = new GoogleAuthProvider()
 
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider)
-    return { user: result.user, error: null }
-  } catch (error) {
-    return { user: null, error: error as Error }
+    await signInWithRedirect(auth, googleProvider)
+    return { user: null, error: null }
+  } catch {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      return { user: result.user, error: null }
+    } catch (popupError) {
+      return { user: null, error: popupError as Error }
+    }
   }
 }
 

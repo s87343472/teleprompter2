@@ -89,10 +89,25 @@ export default function UpdatesPage() {
 
             <div className="space-y-6 md:space-y-16 relative">
               <UpdateItem
+                version="1.1.5"
+                date="December 5, 2025"
+                title="Google Login & Cloud Sync"
+                badges={[{ text: "Latest", color: "green" }, { text: "Feature", color: "purple" }]}
+                description="Sign in with Google and save your scripts to the cloud with end-to-end encryption"
+                features={[
+                  "Google account sign-in support",
+                  "Cloud storage for scripts - access from any device",
+                  "AES-256-GCM end-to-end encryption for all stored data",
+                  "Login button added to homepage and editor",
+                  "Load and manage saved scripts from cloud"
+                ]}
+              />
+
+              <UpdateItem
                 version="1.1.4"
                 date="December 4, 2025"
                 title="Mobile Experience Optimization"
-                badges={[{ text: "Latest", color: "green" }, { text: "Enhancement", color: "purple" }]}
+                badges={[{ text: "Enhancement", color: "purple" }]}
                 description="Completely redesigned mobile editor interface with improved touch interactions"
                 features={[
                   "Full-screen settings panel for mobile devices",

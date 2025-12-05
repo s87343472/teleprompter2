@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, Book, MessageCircle, FileText, Keyboard, Settings, Play, Monitor } from "lucide-react"
+import { ArrowLeft, Book, MessageCircle, FileText, Keyboard, Settings, Play, Monitor, Cloud } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Logo from "@/components/Logo"
 
@@ -93,6 +93,36 @@ export default function HelpCenterPage() {
             </div>
           </div>
 
+          <div id="cloud" className="mb-8 md:mb-12">
+            <h2 className="text-lg md:text-2xl font-bold border-b border-gray-700 md:border-gray-200 pb-2 mb-4 md:mb-6 text-white md:text-black">Cloud Sync</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+              <HelpCard
+                icon={<Cloud className="w-5 h-5 text-orange-500" />}
+                step="1"
+                title="Sign In with Google"
+                description="Click the user icon in the top right corner and sign in with your Google account to enable cloud features."
+              />
+              <HelpCard
+                icon={<Cloud className="w-5 h-5 text-orange-500" />}
+                step="2"
+                title="Save to Cloud"
+                description="After signing in, click your avatar and select 'Save to Cloud' to store your current script securely."
+              />
+              <HelpCard
+                icon={<Cloud className="w-5 h-5 text-orange-500" />}
+                step="3"
+                title="Load from Cloud"
+                description="Access your saved scripts from any device by signing in and selecting 'Load from Cloud'."
+              />
+              <HelpCard
+                icon={<Cloud className="w-5 h-5 text-orange-500" />}
+                step="4"
+                title="End-to-End Encryption"
+                description="All scripts are encrypted with AES-256-GCM before upload. Only you can read your data."
+              />
+            </div>
+          </div>
+
           <div id="tips" className="mb-8 md:mb-12">
             <h2 className="text-lg md:text-2xl font-bold border-b border-gray-700 md:border-gray-200 pb-2 mb-4 md:mb-6 text-white md:text-black">Tips for Best Results</h2>
             <div className="bg-gray-900 md:bg-white rounded-xl md:rounded-lg md:shadow-md p-4 md:p-6 border border-gray-800 md:border-none">
@@ -112,6 +142,10 @@ export default function HelpCenterPage() {
                 <li className="flex items-start gap-2">
                   <span className="text-orange-500 font-bold">•</span>
                   <span>Use Chrome, Firefox, or Safari for the best performance and compatibility.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-orange-500 font-bold">•</span>
+                  <span>Sign in with Google to save your scripts and access them from any device.</span>
                 </li>
               </ul>
             </div>

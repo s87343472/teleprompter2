@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, Play, Monitor, Smartphone, Settings, Mic, ArrowRight, Clock, Zap } from "lucide-react"
+import { ArrowLeft, Play, Monitor, Smartphone, Settings, Mic, ArrowRight, Clock, Zap, Cloud, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Logo from "@/components/Logo"
 
@@ -27,6 +27,8 @@ export default function FeaturesPage() {
           <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-12 text-center text-white">Available Features</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8 mb-8 md:mb-16">
+            <FeatureCard title="Cloud Sync" description="Sign in with Google to save scripts and access from any device" icon={<Cloud className="w-5 h-5 md:w-8 md:h-8 text-orange-500" />} isNew={true} />
+            <FeatureCard title="End-to-End Encryption" description="AES-256-GCM encryption keeps your scripts private and secure" icon={<Lock className="w-5 h-5 md:w-8 md:h-8 text-orange-500" />} isNew={true} />
             <FeatureCard title="Customizable Speed" description="Adjust reading speed in real-time from 0.5x to 3.0x" icon={<Play className="w-5 h-5 md:w-8 md:h-8 text-orange-500" />} />
             <FeatureCard title="Line Tracking" description="Clear visual indicators help you focus on the current line" icon={<Monitor className="w-5 h-5 md:w-8 md:h-8 text-orange-500" />} />
             <FeatureCard title="Adjustable Display" description="Customize font size and line spacing for optimal readability" icon={<Settings className="w-5 h-5 md:w-8 md:h-8 text-orange-500" />} />
@@ -70,12 +72,17 @@ export default function FeaturesPage() {
   )
 }
 
-function FeatureCard({ title, description, icon, comingSoon }: { title: string; description: string; icon: React.ReactNode; comingSoon?: boolean }) {
+function FeatureCard({ title, description, icon, comingSoon, isNew }: { title: string; description: string; icon: React.ReactNode; comingSoon?: boolean; isNew?: boolean }) {
   return (
     <div className="bg-black p-3 md:p-6 rounded-xl md:rounded-none border border-gray-800 relative">
       {comingSoon && (
         <div className="absolute top-2 right-2 md:top-4 md:right-4">
           <span className="font-mono text-[8px] md:text-xs border border-gray-500 px-1 md:px-2 py-0.5 md:py-1 text-gray-400">COMING SOON</span>
+        </div>
+      )}
+      {isNew && (
+        <div className="absolute top-2 right-2 md:top-4 md:right-4">
+          <span className="font-mono text-[8px] md:text-xs bg-orange-500 text-white px-1 md:px-2 py-0.5 md:py-1 rounded">NEW</span>
         </div>
       )}
       <div className="text-xl md:text-3xl mb-2 md:mb-4">{icon}</div>
