@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Play, Pause, Minus, Plus, ChevronRight, Mail, Zap, Target, FileText, Palette, Smartphone, Mic, ArrowRight, Monitor, Settings, X, Menu } from "lucide-react"
+import { Play, Pause, Minus, Plus, ChevronRight, Mail, Zap, Target, FileText, Palette, Smartphone, Mic, ArrowRight, Monitor, Settings, X, Menu, User, LogOut } from "lucide-react"
 import Logo from "@/components/Logo"
 import HomeTeleprompter, { startPlayback } from "@/components/HomeTeleprompter"
+import { useAuth } from "@/contexts/AuthContext"
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -14,6 +16,8 @@ export default function Home() {
   const [speed, setSpeed] = useState(1.0)
   const [currentLine, setCurrentLine] = useState(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const { user, signIn, signOut } = useAuth()
 
   const demoLines = [
     "There is no better school than adversity.",
@@ -53,11 +57,35 @@ export default function Home() {
         <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm">
           <div className="flex justify-between items-center px-4 py-3">
             <Logo variant="light" size={32} withText={true} />
-            <Link href="/editor">
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-2 rounded-lg">
-                Create Now
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              {user ? (
+                <div className="relative">
+                  <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center">
+                    <Image src={user.photoURL || ''} alt="" width={32} height={32} className="w-8 h-8 rounded-full" unoptimized />
+                  </button>
+                  {showUserMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+                      <div className="p-3 border-b border-gray-700">
+                        <p className="text-sm font-medium truncate">{user.displayName}</p>
+                        <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                      </div>
+                      <button onClick={() => { signOut(); setShowUserMenu(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-gray-800">
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button onClick={() => signIn()} className="flex items-center gap-1 text-gray-400 hover:text-white text-sm">
+                  <User className="w-5 h-5" />
+                </button>
+              )}
+              <Link href="/editor">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-2 rounded-lg">
+                  Create Now
+                </Button>
+              </Link>
+            </div>
           </div>
         </nav>
 
@@ -257,6 +285,34 @@ export default function Home() {
               <Link href="/faq" className="text-sm hover:text-orange-500">FAQ</Link>
               <Link href="/updates" className="text-sm hover:text-orange-500">Updates</Link>
               <a href="https://blog.teleprompter.today/" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-orange-500">Blog</a>
+              {user ? (
+                <div className="relative">
+                  <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 hover:opacity-80">
+                    <Image src={user.photoURL || ''} alt="" width={32} height={32} className="w-8 h-8 rounded-full" unoptimized />
+                    <span className="text-sm">{user.displayName?.split(' ')[0]}</span>
+                  </button>
+                  {showUserMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+                      <div className="p-4 border-b border-gray-700">
+                        <p className="font-medium">{user.displayName}</p>
+                        <p className="text-sm text-gray-400 truncate">{user.email}</p>
+                      </div>
+                      <div className="p-2">
+                        <Link href="/editor" onClick={() => setShowUserMenu(false)} className="block px-3 py-2 text-sm hover:bg-gray-800 rounded">
+                          My Scripts
+                        </Link>
+                        <button onClick={() => { signOut(); setShowUserMenu(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-gray-800 rounded">
+                          <LogOut className="w-4 h-4" /> Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button onClick={() => signIn()} className="flex items-center gap-2 text-sm hover:text-orange-500">
+                  <User className="w-5 h-5" /> Sign In
+                </button>
+              )}
               <Link href="/editor">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono">START NOW</Button>
               </Link>
