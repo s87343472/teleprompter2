@@ -5,11 +5,16 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Play, Pause, ChevronUp, ChevronDown, RotateCcw,
-  ChevronsUp, ChevronsDown, Settings, Minus, Plus, X
+  ChevronsUp, ChevronsDown, Settings, Minus, Plus, X,
+  User, LogOut, Cloud, CloudOff
 } from "lucide-react"
 import Logo from "@/components/Logo"
 import Link from "next/link"
-import { getScript, getDefaultScriptContent } from "@/lib/scriptStorage"
+import Image from "next/image"
+import { getScript, getDefaultScriptContent, saveScript } from "@/lib/scriptStorage"
+import { useAuth } from "@/contexts/AuthContext"
+import { saveScriptToCloud, getAllScriptsFromCloud, CloudScript } from "@/lib/cloudStorage"
+import { generateEncryptionKey } from "@/lib/encryption"
 
 type TextCase = 'default' | 'capitalize' | 'uppercase' | 'lowercase'
 type TextAlign = 'left' | 'center' | 'right'
@@ -19,6 +24,7 @@ function EditorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const scriptId = searchParams.get("id") || ""
+  const { user, loading: authLoading, signIn, signOut } = useAuth()
 
   const [originalContent, setOriginalContent] = useState("")
   const [scriptLines, setScriptLines] = useState<string[]>([])
@@ -44,6 +50,25 @@ function EditorContent() {
   const [textEditorContent, setTextEditorContent] = useState("")
   const [containerWidth, setContainerWidth] = useState(896)
   const [isMobile, setIsMobile] = useState(false)
+
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [cloudScripts, setCloudScripts] = useState<CloudScript[]>([])
+  const [showCloudScripts, setShowCloudScripts] = useState(false)
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [encryptionKey, setEncryptionKey] = useState<string>("")
+
+  useEffect(() => {
+    if (user) {
+      const storedKey = localStorage.getItem(`encKey_${user.uid}`)
+      if (storedKey) {
+        setEncryptionKey(storedKey)
+      } else {
+        const newKey = generateEncryptionKey()
+        localStorage.setItem(`encKey_${user.uid}`, newKey)
+        setEncryptionKey(newKey)
+      }
+    }
+  }, [user])
 
   useEffect(() => {
     const updateWidth = () => {
@@ -295,6 +320,44 @@ function EditorContent() {
     setCountdown(3)
   }, [])
 
+  const handleSaveToCloud = async () => {
+    if (!user || !encryptionKey) return
+    setIsSyncing(true)
+    const id = scriptId || `script_${Date.now()}`
+    const title = originalContent.split('\n')[0]?.slice(0, 50) || 'Untitled Script'
+    const result = await saveScriptToCloud(user.uid, {
+      id,
+      title,
+      content: originalContent,
+      settings: { speed, fontSize, lineHeight }
+    }, encryptionKey)
+    setIsSyncing(false)
+    if (result.success) {
+      saveScript(originalContent, title, id, { speed, fontSize, lineHeight })
+    }
+  }
+
+  const handleLoadCloudScripts = async () => {
+    if (!user || !encryptionKey) return
+    setIsSyncing(true)
+    const result = await getAllScriptsFromCloud(user.uid, encryptionKey)
+    setIsSyncing(false)
+    if (result.scripts) {
+      setCloudScripts(result.scripts)
+      setShowCloudScripts(true)
+    }
+  }
+
+  const handleLoadScript = (script: CloudScript) => {
+    setOriginalContent(script.content)
+    if (script.settings) {
+      if (script.settings.speed) setSpeed(script.settings.speed)
+      if (script.settings.fontSize) setFontSize(script.settings.fontSize)
+      if (script.settings.lineHeight) setLineHeight(script.settings.lineHeight)
+    }
+    setShowCloudScripts(false)
+  }
+
   return (
     <div ref={containerRef} className="fixed inset-0 bg-black text-white flex flex-col">
       {/* Top Bar */}
@@ -319,6 +382,80 @@ function EditorContent() {
           >
             <Settings className="w-5 h-5" />
           </Button>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-gray-400 hover:text-white"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              {user ? (
+                <Image src={user.photoURL || ''} alt="" width={24} height={24} className="w-6 h-6 rounded-full" unoptimized />
+              ) : (
+                <User className="w-5 h-5" />
+              )}
+            </Button>
+            {showUserMenu && (
+              <div className="absolute right-0 top-full mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50">
+                {authLoading ? (
+                  <div className="p-4 text-center text-gray-400">Loading...</div>
+                ) : user ? (
+                  <div>
+                    <div className="p-4 border-b border-gray-700">
+                      <div className="flex items-center gap-3">
+                        <Image src={user.photoURL || ''} alt="" width={40} height={40} className="w-10 h-10 rounded-full" unoptimized />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{user.displayName}</p>
+                          <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <button
+                        onClick={handleSaveToCloud}
+                        disabled={isSyncing}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-800 rounded-lg disabled:opacity-50"
+                      >
+                        <Cloud className="w-4 h-4" />
+                        {isSyncing ? 'Saving...' : 'Save to Cloud'}
+                      </button>
+                      <button
+                        onClick={handleLoadCloudScripts}
+                        disabled={isSyncing}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-800 rounded-lg disabled:opacity-50"
+                      >
+                        <CloudOff className="w-4 h-4" />
+                        {isSyncing ? 'Loading...' : 'Load from Cloud'}
+                      </button>
+                      <button
+                        onClick={() => { signOut(); setShowUserMenu(false); }}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-800 rounded-lg text-red-400"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4">
+                    <p className="text-sm text-gray-400 mb-3">Sign in to save scripts to cloud</p>
+                    <button
+                      onClick={() => { signIn(); setShowUserMenu(false); }}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-200 text-sm font-medium"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      Sign in with Google
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -877,6 +1014,50 @@ function EditorContent() {
               >
                 Apply
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCloudScripts && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 sm:p-8">
+          <div className="bg-gray-900 rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-gray-800">
+              <h3 className="text-lg font-medium">Cloud Scripts</h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowCloudScripts(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {cloudScripts.length === 0 ? (
+                <div className="text-center text-gray-400 py-8">
+                  <Cloud className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No scripts saved yet</p>
+                  <p className="text-sm mt-2">Save your current script to cloud to access it anywhere</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {cloudScripts.map((script) => (
+                    <button
+                      key={script.id}
+                      onClick={() => handleLoadScript(script)}
+                      className="w-full text-left p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      <h4 className="font-medium truncate">{script.title}</h4>
+                      <p className="text-sm text-gray-400 truncate mt-1">
+                        {script.content.slice(0, 100)}...
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Updated: {script.updatedAt.toLocaleDateString()}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
